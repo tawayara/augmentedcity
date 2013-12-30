@@ -30,6 +30,10 @@ public class SplashActivity extends Activity {
 			intent.setAction(Intent.ACTION_VIEW);
 			startActivity(intent);
 
+			// call the activity finish method in order to avoid access the screen again when press
+			// the back button
+			finish();
+
 			return null;
 		}
 

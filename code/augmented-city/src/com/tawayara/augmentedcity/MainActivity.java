@@ -92,6 +92,7 @@ public class MainActivity extends AndARActivity implements
 						if (fileReader != null) {
 							model = parser.parse("Model", fileReader);
 							model3d = new Model3D(model);
+							model.setScale(25.0f);
 						}
 					}
 					if (Config.DEBUG)
