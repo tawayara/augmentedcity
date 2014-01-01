@@ -77,7 +77,8 @@ public class MainActivity extends AndARActivity implements
 		@Override
 		protected Void doInBackground(Void... params) {
 
-			String modelFileName = "superman.obj";
+			//String modelFileName = "superman.obj";
+			String modelFileName = "Teemo.obj";
 			BaseFileUtil fileUtil = null;
 			fileUtil = new AssetsFileUtil(getResources().getAssets());
 			fileUtil.setBaseFolder("models/");
@@ -92,7 +93,8 @@ public class MainActivity extends AndARActivity implements
 						if (fileReader != null) {
 							model = parser.parse("Model", fileReader);
 							model3d = new Model3D(model);
-							model.setScale(25.0f);
+							//model.setScale(25.0f);
+							model.setScale(0.05f);
 						}
 					}
 					if (Config.DEBUG)

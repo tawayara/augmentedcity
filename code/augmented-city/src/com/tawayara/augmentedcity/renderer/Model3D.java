@@ -8,9 +8,13 @@ import java.util.Vector;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 import android.util.Log;
 
+import com.tawayara.augmentedcity.R;
 import com.tawayara.augmentedcity.renderer.models.Group;
 import com.tawayara.augmentedcity.renderer.models.Material;
 import com.tawayara.augmentedcity.renderer.models.Model;

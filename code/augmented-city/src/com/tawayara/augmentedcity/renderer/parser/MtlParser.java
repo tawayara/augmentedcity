@@ -1,22 +1,3 @@
-/**
-	Copyright (C) 2010  Tobias Domhan
-
-    This file is part of AndObjViewer.
-
-    AndObjViewer is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AndObjViewer is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AndObjViewer.  If not, see <http://www.gnu.org/licenses/>.
- 
- */
 package com.tawayara.augmentedcity.renderer.parser;
 
 import java.io.BufferedReader;
@@ -26,17 +7,21 @@ import com.tawayara.augmentedcity.renderer.models.Material;
 import com.tawayara.augmentedcity.renderer.models.Model;
 import com.tawayara.augmentedcity.renderer.utils.BaseFileUtil;
 
-
-public class MtlParser { 
+/**
+ * This class aims to parse a MTL file on a material of a 3D model recognized by the renderer.
+ * 
+ */
+public class MtlParser {
 
 	private BaseFileUtil fileUtil;
-	
-	public MtlParser(Model model, BaseFileUtil fileUtil) {
+
+	public MtlParser(BaseFileUtil fileUtil) {
 		this.fileUtil = fileUtil;
 	}
 
 	/**
 	 * parses the given material definition
+	 * 
 	 * @param line
 	 */
 	public void parse(Model model, BufferedReader is) {
@@ -44,10 +29,7 @@ public class MtlParser {
 		int lineNum = 1;
 		String line;
 		try {
-			for (line = is.readLine(); 
-			line != null; 
-			line = is.readLine(), lineNum++)
-			{
+			for (line = is.readLine(); line != null; line = is.readLine(), lineNum++) {
 				line = Util.getCanonicalLine(line).trim();
 				if (line.length() > 0) {
 					if (line.startsWith("newmtl ")) {
@@ -55,12 +37,12 @@ public class MtlParser {
 						String mtlName = line.substring(7);
 						curMat = new Material(mtlName);
 						model.addMaterial(curMat);
-					} else if(curMat == null) {
-						//if the current material is not set, there is no need to parse anything
+					} else if (curMat == null) {
+						// if the current material is not set, there is no need to parse anything
 					} else if (line.startsWith("# ")) {
-						//ignore comments
+						// ignore comments
 					} else if (line.startsWith("Ka ")) {
-						//ambient color
+						// ambient color
 						String endOfLine = line.substring(3);
 						curMat.setAmbient(parseTriple(endOfLine));
 					} else if (line.startsWith("Kd ")) {
@@ -83,16 +65,18 @@ public class MtlParser {
 						// specular color
 						String endOfLine = line.substring(2);
 						curMat.setAlpha(Float.parseFloat(endOfLine));
-					} else if(line.startsWith("map_Kd ")) {
-						//limited texture support
+					} else if (line.startsWith("map_Kd ")) {
+						// limited texture support
 						String imageFileName = line.substring(7);
-						//f�r resources:Bitmap mBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pic1);
+						// f�r resources:Bitmap mBitmap =
+						// BitmapFactory.decodeResource(getResources(),R.drawable.pic1);
 						curMat.setFileUtil(fileUtil);
 						curMat.setBitmapFileName(imageFileName);
-					} else if(line.startsWith("mapKd ")) {
-						//limited texture support
+					} else if (line.startsWith("mapKd ")) {
+						// limited texture support
 						String imageFileName = line.substring(6);
-						//f�r resources:Bitmap mBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.pic1);
+						// f�r resources:Bitmap mBitmap =
+						// BitmapFactory.decodeResource(getResources(),R.drawable.pic1);
 						curMat.setFileUtil(fileUtil);
 						curMat.setBitmapFileName(imageFileName);
 					}
@@ -102,15 +86,13 @@ public class MtlParser {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static float[] parseTriple(String str) {
 		String[] colorVals = str.split(" ");
-		float[] colorArr = new float[]{
-				Float.parseFloat(colorVals[0]),
-				Float.parseFloat(colorVals[1]),
-				Float.parseFloat(colorVals[2])};
+		float[] colorArr = new float[] { Float.parseFloat(colorVals[0]),
+				Float.parseFloat(colorVals[1]), Float.parseFloat(colorVals[2]) };
 		return colorArr;
-		
+
 	}
-	
+
 }
