@@ -8,13 +8,9 @@ import java.util.Vector;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLUtils;
 import android.util.Log;
 
-import com.tawayara.augmentedcity.R;
 import com.tawayara.augmentedcity.renderer.models.Group;
 import com.tawayara.augmentedcity.renderer.models.Material;
 import com.tawayara.augmentedcity.renderer.models.Model;
@@ -31,7 +27,7 @@ public class Model3D extends ARObject implements Serializable {
 	private HashMap<Material, Integer> textureIDs = new HashMap<Material, Integer>();
 
 	public Model3D(Model model) {
-		super("model", "barcode.patt", 80.0, new double[] { 0, 0 });
+		super("barcode.patt", 80.0, new double[] { 0, 0 });
 		this.model = model;
 		model.finalize();
 		// separate texture from non textured groups for performance reasons
@@ -76,8 +72,6 @@ public class Model3D extends ARObject implements Serializable {
 
 		// transfer vertices to video memory
 	}
-
-	private Writer log = new LogWriter();
 
 	@Override
 	public void draw(GL10 gl) {

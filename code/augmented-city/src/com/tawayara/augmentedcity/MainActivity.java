@@ -23,8 +23,7 @@ import edu.dhbw.andar.AndARActivity;
 import edu.dhbw.andar.Config;
 import edu.dhbw.andar.exceptions.AndARException;
 
-public class MainActivity extends AndARActivity implements
-		SurfaceHolder.Callback {
+public class MainActivity extends AndARActivity implements SurfaceHolder.Callback {
 
 	private Model model;
 	private Model3D model3d;
@@ -65,8 +64,8 @@ public class MainActivity extends AndARActivity implements
 		// the preview can be started
 		// after loading the model
 		if (model == null) {
-			waitDialog = ProgressDialog.show(this, "",
-					getResources().getText(R.string.loading), true);
+			waitDialog = ProgressDialog.show(this, "", getResources().getText(R.string.loading),
+					true);
 			waitDialog.show();
 			new ModelLoader().execute();
 		}
@@ -77,10 +76,8 @@ public class MainActivity extends AndARActivity implements
 		@Override
 		protected Void doInBackground(Void... params) {
 
-			//String modelFileName = "superman.obj";
 			String modelFileName = "Teemo.obj";
-			BaseFileUtil fileUtil = null;
-			fileUtil = new AssetsFileUtil(getResources().getAssets());
+			BaseFileUtil fileUtil = new AssetsFileUtil(getResources().getAssets());
 			fileUtil.setBaseFolder("models/");
 
 			// read the model file:
@@ -88,12 +85,11 @@ public class MainActivity extends AndARActivity implements
 				ObjParser parser = new ObjParser(fileUtil);
 				try {
 					if (fileUtil != null) {
-						BufferedReader fileReader = fileUtil
-								.getReaderFromName(modelFileName);
+						BufferedReader fileReader = fileUtil.getReaderFromName(modelFileName);
 						if (fileReader != null) {
 							model = parser.parse("Model", fileReader);
 							model3d = new Model3D(model);
-							//model.setScale(25.0f);
+							// model.setScale(25.0f);
 							model.setScale(0.05f);
 						}
 					}

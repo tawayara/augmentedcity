@@ -21,6 +21,7 @@ import com.tawayara.augmentedcity.renderer.utils.BaseFileUtil;
 public class ObjParser {
 	private final int VERTEX_DIMENSIONS = 3;
 	private final int TEXTURE_COORD_DIMENSIONS = 2;
+	private final int NUMBER_OF_VERTICES_IN_FACE = 3;
 
 	private BaseFileUtil fileUtil;
 
@@ -55,6 +56,123 @@ public class ObjParser {
 		return normal;
 	}
 
+	private void parseMaterials(Model model, String line) {
+		String filename = line.substring(7);
+		String[] files = Util.splitBySpace(filename);
+
+		for (int i = 0; i < files.length; i++) {
+			BufferedReader mtlFile = fileUtil.getReaderFromName(files[i]);
+			if (mtlFile != null) {
+				MtlParser mtlParser = new MtlParser(fileUtil);
+				mtlParser.parse(model, mtlFile);
+			}
+		}
+	}
+
+	private Group verifyAndCreateNewGroup(Model model, Group group) {
+		// verify if the group already contains values inside it in order to create a new one only
+		// if necessary
+		if (group.groupVertices.size() > 0) {
+			// add the current group to the model before create a new one
+			model.addGroup(group);
+
+			// create the new group instance to be returned
+			group = new Group();
+		}
+
+		return group;
+	}
+
+	private void updateGroupsMaterials(Model model) {
+		Iterator<Group> groupIt = model.getGroups().iterator();
+		while (groupIt.hasNext()) {
+			Group group = (Group) groupIt.next();
+			group.setMaterial(model.getMaterial(group.getMaterialName()));
+		}
+	}
+
+	private void verifyNumberOfVerticesForFace(String modelName, int lineNumber,
+			SimpleTokenizer spaceTokenizer) throws ParseException {
+		int faces = spaceTokenizer.delimOccurCount() + 1;
+		
+		if (faces != NUMBER_OF_VERTICES_IN_FACE) {
+			throw new ParseException(modelName, lineNumber, "only triangle faces are supported");
+		}
+	}
+
+	private void parseFace(String modelName, ArrayList<float[]> vertices,
+			ArrayList<float[]> normals, ArrayList<float[]> texcoords, Group currentGroup,
+			int lineNumber, String line) throws ParseException {
+		// Create a SimpleTokenizer that uses a slash as delimiter
+		SimpleTokenizer slashTokenizer = new SimpleTokenizer();
+		slashTokenizer.setDelimiter("/");
+
+		SimpleTokenizer spaceTokenizer = createTokenizer(line.substring(2));
+
+		// If the number of vertices is not supported by the face specification a parse exception
+		// will be raised. The number of used vertices must be 3 because only triangle faces are
+		// supported
+		verifyNumberOfVerticesForFace(modelName, lineNumber, spaceTokenizer);
+
+		for (int i = 0; i < NUMBER_OF_VERTICES_IN_FACE; i++) {
+			// apply the proper value to the slash tokenizer
+			slashTokenizer.setStr(spaceTokenizer.next());
+			
+			int vertexCount = slashTokenizer.delimOccurCount() + 1;
+			int vertexID = 0;
+			int textureID = -1;
+			int normalID = 0;
+			if (vertexCount == 2) {
+				vertexID = slashTokenizer.nextAsInteger();
+				normalID = slashTokenizer.nextAsInteger();
+				throw new ParseException(modelName, lineNumber, "vertex normal needed.");
+			} else if (vertexCount == 3) {
+				vertexID = slashTokenizer.nextAsInteger();
+				textureID = slashTokenizer.nextAsInteger();
+				normalID = slashTokenizer.nextAsInteger();
+			} else {
+				throw new ParseException(modelName, lineNumber,
+						"a faces needs reference a vertex, a normal vertex and optionally a texture coordinate per vertex.");
+			}
+
+			float[] vec;
+			try {
+				vec = vertices.get(vertexID);
+			} catch (IndexOutOfBoundsException ex) {
+				throw new ParseException(modelName, lineNumber, "non existing vertex referenced.");
+			}
+			if (vec == null)
+				throw new ParseException(modelName, lineNumber, "non existing vertex referenced.");
+			for (int j = 0; j < VERTEX_DIMENSIONS; j++)
+				currentGroup.groupVertices.add(vec[j]);
+			if (textureID != -1) {
+				// in case there is a texture on the face
+				try {
+					vec = texcoords.get(textureID);
+				} catch (IndexOutOfBoundsException ex) {
+					throw new ParseException(modelName, lineNumber,
+							"non existing texture coord referenced.");
+				}
+				if (vec == null)
+					throw new ParseException(modelName, lineNumber,
+							"non existing texture coordinate referenced.");
+				for (int j = 0; j < TEXTURE_COORD_DIMENSIONS; j++)
+					currentGroup.groupTexcoords.add(vec[j]);
+			}
+			try {
+				vec = normals.get(normalID);
+			} catch (IndexOutOfBoundsException ex) {
+				throw new ParseException(modelName, lineNumber,
+						"non existing normal vertex referenced.");
+			}
+			if (vec == null)
+				throw new ParseException(modelName, lineNumber,
+						"non existing normal vertex referenced.");
+			for (int j = 0; j < VERTEX_DIMENSIONS; j++)
+				currentGroup.groupNormals.add(vec[j]);
+		}
+	}
+
 	/**
 	 * Parses an Wavefront OBJ file on a model recognized by the renderer.
 	 * 
@@ -67,19 +185,15 @@ public class ObjParser {
 	 * @throws ParseException
 	 */
 	public Model parse(String modelName, BufferedReader is) throws IOException, ParseException {
-		// global vertices/normals
+		Model model = new Model();
+		Group currentGroup = new Group();
+		
 		ArrayList<float[]> vertices = new ArrayList<float[]>(1000);
 		ArrayList<float[]> normals = new ArrayList<float[]>(1000);
 		ArrayList<float[]> texcoords = new ArrayList<float[]>();
 
-		Model model = new Model();
-		Group curGroup = new Group();
-		SimpleTokenizer slashTokenizer = new SimpleTokenizer();
-		slashTokenizer.setDelimiter("/");
-
-		String line;
-		int lineNum = 1;
-		for (line = is.readLine(); line != null; line = is.readLine(), lineNum++) {
+		int lineNumber = 1;
+		for (String line = is.readLine(); line != null; line = is.readLine(), lineNumber++) {
 			if (line.length() > 0) {
 				if (line.startsWith("#")) {
 					// just ignore lines with comments
@@ -89,120 +203,28 @@ public class ObjParser {
 					texcoords.add(parseTextureCoordinate(line));
 				} else if (line.startsWith("vn ")) {
 					normals.add(parseNormal(line));
-				} else if (line.startsWith("f ")) {
-					// add face to group
-					SimpleTokenizer spaceTokenizer = new SimpleTokenizer();
-					String endOfLine = line.substring(2);
-					spaceTokenizer.setStr(endOfLine);
-					int faces = spaceTokenizer.delimOccurCount() + 1;
-					if (faces != 3) {
-						throw new ParseException(modelName, lineNum,
-								"only triangle faces are supported");
-					}
-					for (int i = 0; i < 3; i++) {// only triangles supported
-						String face = spaceTokenizer.next();
-						slashTokenizer.setStr(face);
-						int vertexCount = slashTokenizer.delimOccurCount() + 1;
-						int vertexID = 0;
-						int textureID = -1;
-						int normalID = 0;
-						if (vertexCount == 2) {
-							// vertex reference
-							vertexID = Integer.parseInt(slashTokenizer.next()) - 1;
-							// normal reference
-							normalID = Integer.parseInt(slashTokenizer.next()) - 1;
-							throw new ParseException(modelName, lineNum, "vertex normal needed.");
-						} else if (vertexCount == 3) {
-							// vertex reference
-							vertexID = Integer.parseInt(slashTokenizer.next()) - 1;
-							String texCoord = slashTokenizer.next();
-							if (!texCoord.equals("")) {
-								// might be omitted
-								// texture coord reference
-								textureID = Integer.parseInt(texCoord) - 1;
-							}
-							// normal reference
-							normalID = Integer.parseInt(slashTokenizer.next()) - 1;
-						} else {
-							throw new ParseException(modelName, lineNum,
-									"a faces needs reference a vertex, a normal vertex and optionally a texture coordinate per vertex.");
-						}
-						float[] vec;
-						try {
-							vec = vertices.get(vertexID);
-						} catch (IndexOutOfBoundsException ex) {
-							throw new ParseException(modelName, lineNum,
-									"non existing vertex referenced.");
-						}
-						if (vec == null)
-							throw new ParseException(modelName, lineNum,
-									"non existing vertex referenced.");
-						for (int j = 0; j < VERTEX_DIMENSIONS; j++)
-							curGroup.groupVertices.add(vec[j]);
-						if (textureID != -1) {
-							// in case there is a texture on the face
-							try {
-								vec = texcoords.get(textureID);
-							} catch (IndexOutOfBoundsException ex) {
-								throw new ParseException(modelName, lineNum,
-										"non existing texture coord referenced.");
-							}
-							if (vec == null)
-								throw new ParseException(modelName, lineNum,
-										"non existing texture coordinate referenced.");
-							for (int j = 0; j < TEXTURE_COORD_DIMENSIONS; j++)
-								curGroup.groupTexcoords.add(vec[j]);
-						}
-						try {
-							vec = normals.get(normalID);
-						} catch (IndexOutOfBoundsException ex) {
-							throw new ParseException(modelName, lineNum,
-									"non existing normal vertex referenced.");
-						}
-						if (vec == null)
-							throw new ParseException(modelName, lineNum,
-									"non existing normal vertex referenced.");
-						for (int j = 0; j < VERTEX_DIMENSIONS; j++)
-							curGroup.groupNormals.add(vec[j]);
-					}
-				} else if (line.startsWith("mtllib ")) {
-					// parse material file
-					// get ID of the mtl file
-					String filename = line.substring(7);
-					String[] files = Util.splitBySpace(filename);
-					for (int i = 0; i < files.length; i++) {
-						BufferedReader mtlFile = fileUtil.getReaderFromName(files[i]);
-						if (mtlFile != null) {
-							MtlParser mtlParser = new MtlParser(fileUtil);
-							mtlParser.parse(model, mtlFile);
-						}
-					}
-				} else if (line.startsWith("usemtl ")) {
-					// material changed -> new group
-					if (curGroup.groupVertices.size() > 0) {
-						model.addGroup(curGroup);
-						curGroup = new Group();
-					}
-					// the rest of the line contains the name of the new material
-					curGroup.setMaterialName(line.substring(7));
 				} else if (line.startsWith("g ")) {
-					// new group definition
-					if (curGroup.groupVertices.size() > 0) {
-						model.addGroup(curGroup);
-						curGroup = new Group();
-						// group name will be ignored so far...is there any use?
-					}
+					currentGroup = verifyAndCreateNewGroup(model, currentGroup);
+				} else if (line.startsWith("usemtl ")) {
+					currentGroup = verifyAndCreateNewGroup(model, currentGroup);
+					currentGroup.setMaterialName(line.substring(7));
+				} else if (line.startsWith("mtllib ")) {
+					parseMaterials(model, line);
+				} else if (line.startsWith("f ")) {
+					parseFace(modelName, vertices, normals, texcoords, currentGroup, lineNumber,
+							line);
 				}
 			}
 		}
-		if (curGroup.groupVertices.size() > 0) {
-			model.addGroup(curGroup);
+
+		// add the last used group to the model
+		if (currentGroup.groupVertices.size() > 0) {
+			model.addGroup(currentGroup);
 		}
-		Iterator<Group> groupIt = model.getGroups().iterator();
-		while (groupIt.hasNext()) {
-			Group group = (Group) groupIt.next();
-			group.setMaterial(model.getMaterial(group.getMaterialName()));
-		}
+
+		// apply groups materials based on the given material name
+		updateGroupsMaterials(model);
+
 		return model;
 	}
 }

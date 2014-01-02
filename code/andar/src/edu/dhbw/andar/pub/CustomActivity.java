@@ -40,11 +40,9 @@ public class CustomActivity extends AndARActivity {
 		super.setNonARRenderer(renderer);// or might be omited
 		try {
 			artoolkit = super.getArtoolkit();
-			someObject = new CustomObject("test", "patt.hiro", 80.0,
-					new double[] { 0, 0 });
+			someObject = new CustomObject("patt.hiro", 80.0, new double[] { 0, 0 });
 			artoolkit.registerARObject(someObject);
-			someObject = new CustomObject("test", "android.patt", 80.0,
-					new double[] { 0, 0 });
+			someObject = new CustomObject("android.patt", 80.0, new double[] { 0, 0 });
 			artoolkit.registerARObject(someObject);
 			// someObject = new CustomObject
 			// ("test", "barcode.patt", 80.0, new double[]{0,0});

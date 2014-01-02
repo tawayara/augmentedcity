@@ -258,20 +258,8 @@ public class ARToolkit {
 		}
 	}
 	
-	
-	
-	/** 
-	 * @param visListener listener to add to the registered listeners.
-	 * @deprecated Use addVisibilityListener instead.
-	 */
-	@Deprecated
-	public void setVisListener(MarkerVisibilityListener visListener) {		
-		this.visListeners.add(visListener);
-	}
-	
-	public void addVisibilityListener(
-			MarkerVisibilityListener markerVisibilityListener) {
-		visListeners.add(markerVisibilityListener);		
+	public void addVisibilityListener(MarkerVisibilityListener markerVisibilityListener) {
+		this.visListeners.add(markerVisibilityListener);		
 	}
 
 

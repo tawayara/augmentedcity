@@ -3,13 +3,8 @@ package edu.dhbw.andar.pub;
 import java.nio.FloatBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL10Ext;
-
-import android.opengl.GLU;
-import android.opengl.GLUtils;
 
 import edu.dhbw.andar.ARObject;
-import edu.dhbw.andar.AndARRenderer;
 import edu.dhbw.andar.util.GraphicsUtil;
 
 /**
@@ -20,9 +15,8 @@ import edu.dhbw.andar.util.GraphicsUtil;
 public class CustomObject extends ARObject {
 
 	
-	public CustomObject(String name, String patternName,
-			double markerWidth, double[] markerCenter) {
-		super(name, patternName, markerWidth, markerCenter);
+	public CustomObject(String patternName, double markerWidth, double[] markerCenter) {
+		super(patternName, markerWidth, markerCenter);
 		float   mat_ambientf[]     = {0f, 1.0f, 0f, 1.0f};
 		float   mat_flashf[]       = {0f, 1.0f, 0f, 1.0f};
 		float   mat_diffusef[]       = {0f, 1.0f, 0f, 1.0f};
@@ -34,9 +28,8 @@ public class CustomObject extends ARObject {
 		mat_diffuse = GraphicsUtil.makeFloatBuffer(mat_diffusef);
 		
 	}
-	public CustomObject(String name, String patternName,
-			double markerWidth, double[] markerCenter, float[] customColor) {
-		super(name, patternName, markerWidth, markerCenter);
+	public CustomObject(String patternName, double markerWidth, double[] markerCenter, float[] customColor) {
+		super(patternName, markerWidth, markerCenter);
 		float   mat_flash_shinyf[] = {50.0f};
 
 		mat_ambient = GraphicsUtil.makeFloatBuffer(customColor);

@@ -38,6 +38,14 @@ public class SimpleTokenizer {
 		return str.substring(i);
 	}
 	
+	public final int nextAsInteger() {
+		try {
+			return Integer.parseInt(next()) -1;
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+	
 	/**
 	 * how often does the delimiter occur in the given string?
 	 * @return

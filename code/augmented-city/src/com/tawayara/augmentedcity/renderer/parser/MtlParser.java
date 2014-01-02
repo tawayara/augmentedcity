@@ -26,10 +26,9 @@ public class MtlParser {
 	 */
 	public void parse(Model model, BufferedReader is) {
 		Material curMat = null;
-		int lineNum = 1;
 		String line;
 		try {
-			for (line = is.readLine(); line != null; line = is.readLine(), lineNum++) {
+			for (line = is.readLine(); line != null; line = is.readLine()) {
 				line = Util.getCanonicalLine(line).trim();
 				if (line.length() > 0) {
 					if (line.startsWith("newmtl ")) {
@@ -68,14 +67,14 @@ public class MtlParser {
 					} else if (line.startsWith("map_Kd ")) {
 						// limited texture support
 						String imageFileName = line.substring(7);
-						// f�r resources:Bitmap mBitmap =
+						// f���r resources:Bitmap mBitmap =
 						// BitmapFactory.decodeResource(getResources(),R.drawable.pic1);
 						curMat.setFileUtil(fileUtil);
 						curMat.setBitmapFileName(imageFileName);
 					} else if (line.startsWith("mapKd ")) {
 						// limited texture support
 						String imageFileName = line.substring(6);
-						// f�r resources:Bitmap mBitmap =
+						// f���r resources:Bitmap mBitmap =
 						// BitmapFactory.decodeResource(getResources(),R.drawable.pic1);
 						curMat.setFileUtil(fileUtil);
 						curMat.setBitmapFileName(imageFileName);

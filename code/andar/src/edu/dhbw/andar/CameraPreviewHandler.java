@@ -1,22 +1,3 @@
-/**
-	Copyright (C) 2009,2010  Tobias Domhan
-
-    This file is part of AndOpenGLCam.
-
-    AndObjViewer is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AndObjViewer is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AndObjViewer.  If not, see <http://www.gnu.org/licenses/>.
- 
- */
 package edu.dhbw.andar;
 
 import java.nio.ByteBuffer;
@@ -26,7 +7,7 @@ import java.util.List;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.content.res.Resources;
-import android.graphics.PixelFormat;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.Parameters;
@@ -34,7 +15,6 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
-import edu.dhbw.andar.exceptions.AndARException;
 import edu.dhbw.andar.exceptions.AndARRuntimeException;
 import edu.dhbw.andar.interfaces.MarkerVisibilityListener;
 import edu.dhbw.andar.interfaces.PreviewFrameSink;
@@ -116,12 +96,12 @@ public class CameraPreviewHandler implements PreviewCallback {
 		int format = -1;
 		for (Iterator<Integer> iterator = listOfFormats.iterator(); iterator.hasNext();) {
 			Integer integer =  iterator.next();
-			if(integer.intValue() == PixelFormat.YCbCr_420_SP) {
+			if(integer.intValue() == ImageFormat.NV21) {
 				//alright the optimal format is supported..let's return
-				format = PixelFormat.YCbCr_420_SP;
+				format = ImageFormat.NV21;
 				return format;
-			} else if(integer.intValue() == PixelFormat.YCbCr_422_SP) {
-				format = PixelFormat.YCbCr_422_SP;
+			} else if(integer.intValue() == ImageFormat.NV16) {
+				format = ImageFormat.NV16;
 				//this format is not optimal. do not return, a better format might be in the list.
 			}
 		}
@@ -140,12 +120,12 @@ public class CameraPreviewHandler implements PreviewCallback {
 	protected void init(Camera camera)  {
 		Parameters camParams = camera.getParameters();
 		//check if the pixel format is supported
-		if (camParams.getPreviewFormat() == PixelFormat.YCbCr_420_SP)  {
+		if (camParams.getPreviewFormat() == ImageFormat.NV21)  {
 			setMode(MODE_RGB);
-		} else if (camParams.getPreviewFormat() == PixelFormat.YCbCr_422_SP) {
+		} else if (camParams.getPreviewFormat() == ImageFormat.NV16) {
 			setMode(MODE_GRAY);
 		} else {
-			//Das Format ist semi planar, Erklärung:
+			//Das Format ist semi planar, Erkl��rung:
 			//semi-planar YCbCr 4:2:2 : two arrays, one with all Ys, one with Cb and Cr. 
 			//Quelle: http://www.celinuxforum.org/CelfPubWiki/AudioVideoGraphicsSpec_R2
 			throw new AndARRuntimeException(res.getString(R.string.error_unkown_pixel_format));
@@ -170,7 +150,7 @@ public class CameraPreviewHandler implements PreviewCallback {
 		if(focusHandler == null) {
 			focusHandler = new AutoFocusHandler(camera);
 			focusHandler.start();
-			markerInfo.setVisListener(focusHandler);
+			markerInfo.addVisibilityListener(focusHandler);
 		}
 	}
 

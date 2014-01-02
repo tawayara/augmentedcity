@@ -23,16 +23,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import edu.dhbw.andar.exceptions.AndARRuntimeException;
-import edu.dhbw.andar.util.GraphicsUtil;
-import edu.dhbw.andopenglcam.R;
-
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.graphics.PixelFormat;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
-import android.os.Build;
 import android.util.Log;
+import edu.dhbw.andar.exceptions.AndARRuntimeException;
+import edu.dhbw.andar.util.GraphicsUtil;
 
 /**
  * Only the newer versions of the SDK support querying the available preview
@@ -149,9 +146,9 @@ public class CameraParameters {
 
 		} else {
 			Parameters params = camera.getParameters();
-			if(params.getPreviewFormat() != PixelFormat.YCbCr_420_SP) {
+			if(params.getPreviewFormat() != ImageFormat.NV21) {
 				// try to set the preview format, if it was not YCbCr_420 already
-				params.setPreviewFormat(PixelFormat.YCbCr_420_SP);
+				params.setPreviewFormat(ImageFormat.NV21);
 				try {
 					camera.setParameters(params);
 				} catch (RuntimeException ex) {

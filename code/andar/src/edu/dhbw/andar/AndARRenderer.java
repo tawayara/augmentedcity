@@ -1,24 +1,4 @@
-/**
-	Copyright (C) 2009,2010  Tobias Domhan
-
-    This file is part of AndOpenGLCam.
-
-    AndObjViewer is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AndObjViewer is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AndObjViewer.  If not, see <http://www.gnu.org/licenses/>.
- 
- */
 package edu.dhbw.andar;
-
 
 import java.io.Writer;
 import java.nio.Buffer;
@@ -31,18 +11,14 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import edu.dhbw.andar.interfaces.OpenGLRenderer;
-import edu.dhbw.andar.interfaces.PreviewFrameSink;
-
-
-
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.PixelFormat;
 import android.graphics.Bitmap.Config;
+import android.graphics.PixelFormat;
 import android.opengl.GLDebugHelper;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
+import edu.dhbw.andar.interfaces.OpenGLRenderer;
+import edu.dhbw.andar.interfaces.PreviewFrameSink;
 
 /**
  * Opens the camera and displays the output on a square (as a texture)
@@ -50,7 +26,6 @@ import android.util.Log;
  *
  */
 public class AndARRenderer implements Renderer, PreviewFrameSink{
-	private Resources res;
 	private boolean DEBUG = false;
 	private int textureName;
 	private float[] square;
@@ -107,8 +82,7 @@ public class AndARRenderer implements Renderer, PreviewFrameSink{
 	 * @param res Resources
 	 * @param customRenderer non AR renderer, may be null
 	 */
-	public AndARRenderer(Resources res, ARToolkit markerInfo, AndARActivity activity)  {
-		this.res = res;
+	public AndARRenderer(ARToolkit markerInfo, AndARActivity activity)  {
 		this.markerInfo = markerInfo;
 		this.activity = activity;
 	}

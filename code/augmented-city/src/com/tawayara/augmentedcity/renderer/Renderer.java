@@ -27,16 +27,14 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	private final Vector<Model3D> models;
 	private final Vector3D cameraPosition = new Vector3D(0, 3, 50);
-	private Context context;
 
 	// FPS stuff
 	long frame = 0, time, timebase = 0;
 
 	// end FPS stuff
 
-	public Renderer(Vector<Model3D> models, Context context) {
+	public Renderer(Vector<Model3D> models) {
 		this.models = models;
-		this.context = context;
 	}
 
 	public void addModel(Model3D model) {

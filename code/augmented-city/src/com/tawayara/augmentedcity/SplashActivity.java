@@ -21,8 +21,8 @@ public class SplashActivity extends Activity {
 		protected Void doInBackground(Void... params) {
 			try {
 				Thread.sleep(2000);
+				// TODO the resources loading code must be placed here
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

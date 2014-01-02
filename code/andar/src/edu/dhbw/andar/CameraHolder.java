@@ -17,7 +17,6 @@
 package edu.dhbw.andar;
 
 
-import android.hardware.Camera.Parameters;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -46,7 +45,7 @@ public class CameraHolder {
     // so we can restore them in the subsequent open() requests by the user.
     // This prevents the parameters set by the Camera activity used by
     // the VideoCamera activity inadvertently.
-    private Parameters mParameters;
+    //private Parameters mParameters;
 
     // Use a singleton.
     private static CameraHolder sHolder;
@@ -87,7 +86,7 @@ public class CameraHolder {
             } catch (RuntimeException e) {
                 Log.e(TAG, "fail to connect Camera", e);
             }
-            mParameters = mCameraDevice.getParameters();
+            //mParameters = mCameraDevice.getParameters();
         } else {
             /*try {
                 mCameraDevice.stopPreview();

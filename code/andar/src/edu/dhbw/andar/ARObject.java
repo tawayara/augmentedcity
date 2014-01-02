@@ -35,7 +35,6 @@ public abstract class ARObject {
 	 * Is this object visible? -> is the marker belonging to this object visible?
 	 */
 	private boolean visible = false;
-	private String name;
 	private String patternName;
 	private double markerWidth;
 	private double[] center;
@@ -57,8 +56,7 @@ public abstract class ARObject {
 	 * @param markerWidth
 	 * @param markerCenter
 	 */
-	public ARObject(String name, String patternName, double markerWidth, double[] markerCenter) {
-		this.name = name;
+	public ARObject(String patternName, double markerWidth, double[] markerCenter) {
 		this.patternName = patternName;
 		this.markerWidth = markerWidth;
 		if(markerCenter.length == 2) {
