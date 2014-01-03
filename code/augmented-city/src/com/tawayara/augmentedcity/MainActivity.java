@@ -7,7 +7,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
-import android.view.Menu;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.tawayara.augmentedcity.renderer.LightingRenderer;
@@ -25,6 +25,8 @@ import edu.dhbw.andar.exceptions.AndARException;
 
 public class MainActivity extends AndARActivity implements SurfaceHolder.Callback {
 
+	private static final String TAG = MainActivity.class.getSimpleName();
+	
 	private Model model;
 	private Model3D model3d;
 	private ProgressDialog waitDialog;
@@ -37,21 +39,13 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		super.setNonARRenderer(new LightingRenderer());// or might be omited
+		super.setNonARRenderer(new LightingRenderer());
 		artoolkit = getArtoolkit();
-		// getSurfaceView().setOnTouchListener(new TouchEventHandler());
 		getSurfaceView().getHolder().addCallback(this);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public void uncaughtException(Thread arg0, Throwable arg1) {
+	public void uncaughtException(Thread thread, Throwable error) {
 		// TODO Auto-generated method stub
 
 	}
@@ -59,10 +53,8 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		super.surfaceCreated(holder);
-		// load the model
-		// this is done here, to assure the surface was already created, so that
-		// the preview can be started
-		// after loading the model
+		
+		// The 3D model is being loaded here in order to assure that the surface was already created
 		if (model == null) {
 			waitDialog = ProgressDialog.show(this, "", getResources().getText(R.string.loading),
 					true);
@@ -89,7 +81,6 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 						if (fileReader != null) {
 							model = parser.parse("Model", fileReader);
 							model3d = new Model3D(model);
-							// model.setScale(25.0f);
 							model.setScale(0.05f);
 						}
 					}
@@ -111,11 +102,13 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 
 			// register model
 			try {
-				if (model3d != null)
+				if (model3d != null) {
 					artoolkit.registerARObject(model3d);
+				}
 			} catch (AndARException e) {
-				e.printStackTrace();
+				Log.e(TAG, "It was not possible to register the AR model.", e);
 			}
+			
 			startPreview();
 		}
 	}
