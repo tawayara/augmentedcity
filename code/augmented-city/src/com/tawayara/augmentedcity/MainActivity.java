@@ -13,8 +13,8 @@ import android.view.SurfaceHolder;
 import com.tawayara.augmentedcity.renderer.LightingRenderer;
 import com.tawayara.augmentedcity.renderer.Model3D;
 import com.tawayara.augmentedcity.renderer.models.Model;
-import com.tawayara.augmentedcity.renderer.parser.ObjParser;
 import com.tawayara.augmentedcity.renderer.parser.ParseException;
+import com.tawayara.augmentedcity.renderer.parser.obj.ObjParser;
 import com.tawayara.augmentedcity.renderer.utils.AssetsFileUtil;
 import com.tawayara.augmentedcity.renderer.utils.BaseFileUtil;
 

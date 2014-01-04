@@ -1,23 +1,4 @@
-/**
-	Copyright (C) 2010  Tobias Domhan
-
-    This file is part of AndObjViewer.
-
-    AndObjViewer is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    AndObjViewer is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with AndObjViewer.  If not, see <http://www.gnu.org/licenses/>.
- 
- */
-package com.tawayara.augmentedcity.renderer.parser;
+package com.tawayara.augmentedcity.renderer.parser.obj;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -26,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class Util {
+class Util {
 	
 	private static final Pattern trimWhiteSpaces = Pattern.compile("[\\s]+");
 	private static final Pattern removeInlineComments = Pattern.compile("#");

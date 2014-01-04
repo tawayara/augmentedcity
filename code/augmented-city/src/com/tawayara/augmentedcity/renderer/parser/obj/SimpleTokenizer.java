@@ -1,6 +1,6 @@
-package com.tawayara.augmentedcity.renderer.parser;
+package com.tawayara.augmentedcity.renderer.parser.obj;
 
-public class SimpleTokenizer {
+class SimpleTokenizer {
 	String str = "";
 	String delimiter = " ";
 	int delimiterLength = delimiter.length();

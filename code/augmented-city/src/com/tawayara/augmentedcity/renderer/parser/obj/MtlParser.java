@@ -1,4 +1,4 @@
-package com.tawayara.augmentedcity.renderer.parser;
+package com.tawayara.augmentedcity.renderer.parser.obj;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import com.tawayara.augmentedcity.renderer.utils.BaseFileUtil;
  * This class aims to parse a MTL file on a material of a 3D model recognized by the renderer.
  * 
  */
-public class MtlParser {
+class MtlParser {
 
 	private BaseFileUtil fileUtil;
 
