@@ -8,7 +8,7 @@ class LineToFloatArrayParser {
 
 	private String lineStart;
 	private int expectedArrayLenght;
-	private SimpleTokenizer spaceTokenizer;
+	private Tokenizer spaceTokenizer;
 
 	/**
 	 * Default constructor of the LineToFloatArrayParser class.
@@ -22,7 +22,7 @@ class LineToFloatArrayParser {
 	public LineToFloatArrayParser(String lineStart, int expectedArrayLenght) {
 		this.lineStart = lineStart;
 		this.expectedArrayLenght = expectedArrayLenght;
-		this.spaceTokenizer = new SimpleTokenizer();
+		this.spaceTokenizer = new Tokenizer();
 	}
 
 	/**
@@ -46,7 +46,7 @@ class LineToFloatArrayParser {
 	 */
 	public float[] parse(String line) {
 		float[] result = new float[this.expectedArrayLenght];
-		this.spaceTokenizer.setStr(getArrayString(line));
+		this.spaceTokenizer.setText(getArrayString(line));
 
 		for (int i = 0; i < this.expectedArrayLenght; i++) {
 			result[i] = Float.parseFloat(this.spaceTokenizer.next());

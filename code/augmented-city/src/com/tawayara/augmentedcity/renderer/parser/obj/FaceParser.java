@@ -7,30 +7,27 @@ import com.tawayara.augmentedcity.renderer.parser.ParseException;
 
 public class FaceParser {
 
-	private static final int VERTEX_COUNT = 3;
-	private static final int NORMALS_COUNT = 3;
-	private static final int TEXTURE_COUNT = 2;
 	private static final int NUMBER_OF_VERTICES_IN_FACE = 3;
 
-	private SimpleTokenizer slashTokenizer;
+	private Tokenizer slashTokenizer;
 
 	private class FacePart {
-		public int vertexID = 0;
-		public int textureID = -1;
-		public int normalID = 0;
+		public int vertex = 0;
+		public int texture = -1;
+		public int normal = 0;
 	}
 
 	public FaceParser() {
 		// Create a SimpleTokenizer that uses a slash as delimiter
-		this.slashTokenizer = new SimpleTokenizer();
+		this.slashTokenizer = new Tokenizer();
 		this.slashTokenizer.setDelimiter("/");
 	}
 
-	public void parse(String model, ModelArrays modelArrays, Group currentGroup, int lineNumber, String line)
-			throws ParseException {
+	public void parse(String model, ModelArrays modelArrays, Group currentGroup, int lineNumber,
+			String line) throws ParseException {
 
-		SimpleTokenizer spaceTokenizer = new SimpleTokenizer();
-		spaceTokenizer.setStr(line.substring(2));
+		Tokenizer spaceTokenizer = new Tokenizer();
+		spaceTokenizer.setText(line.substring(2));
 
 		verifyNumberOfVerticesForFace(model, lineNumber, spaceTokenizer);
 
@@ -43,7 +40,7 @@ public class FaceParser {
 	// If the number of vertices is not supported by the face specification a parse exception will
 	// be raised. The number of used vertices must be 3 because only triangle faces are supported
 	private void verifyNumberOfVerticesForFace(String modelName, int lineNumber,
-			SimpleTokenizer spaceTokenizer) throws ParseException {
+			Tokenizer spaceTokenizer) throws ParseException {
 		int faces = spaceTokenizer.delimOccurCount() + 1;
 
 		if (faces != NUMBER_OF_VERTICES_IN_FACE) {
@@ -53,52 +50,51 @@ public class FaceParser {
 
 	private FacePart extractFacePart(String text, String modelName, int lineNumber)
 			throws ParseException {
-		this.slashTokenizer.setStr(text);
+		this.slashTokenizer.setText(text);
 
 		int vertexCount = this.slashTokenizer.delimOccurCount() + 1;
 		FacePart result = new FacePart();
 
 		if (vertexCount == 2) {
-			result.vertexID = this.slashTokenizer.nextAsInteger();
-			result.textureID = this.slashTokenizer.nextAsInteger();
+			// The face may have vertex and texture only, but it will not be supported now.
+			// TODO: Make the full face support - http://en.wikipedia.org/wiki/Wavefront_.obj_file
 			throw new ParseException(modelName, lineNumber, "Vertex normal is necessary.");
 		} else if (vertexCount == 3) {
-			result.vertexID = this.slashTokenizer.nextAsInteger();
-			result.textureID = this.slashTokenizer.nextAsInteger();
-			result.normalID = this.slashTokenizer.nextAsInteger();
+			result.vertex = this.slashTokenizer.nextAsInteger();
+			result.texture = this.slashTokenizer.nextAsInteger();
+			result.normal = this.slashTokenizer.nextAsInteger();
 		} else {
 			throw new ParseException(modelName, lineNumber,
-					"a faces needs reference a vertex, a normal vertex and optionally a texture coordinate per vertex.");
+					"Face part needs to reference vertex, normal and texture coordinate.");
 		}
 
 		return result;
 	}
 
-	private void verifyAndAdd(ArrayList<float[]> originalList, int id, ArrayList<Float> destList,
-			int dimension) throws Exception {
-		float[] vec = originalList.get(id);
+	private void addToGroup(int index, ArrayList<float[]> originalList, ArrayList<Float> destList)
+			throws Exception {
+		float[] vec = originalList.get(index);
 
 		if (vec == null) {
 			throw new Exception();
 		}
 
-		for (int j = 0; j < dimension; j++) {
+		for (int j = 0; j < vec.length; j++) {
 			destList.add(vec[j]);
 		}
 	}
 
-	private void processFacePart(String modelName, ModelArrays modelArrays, Group currentGroup,
-			int lineNumber, String facePartText) throws ParseException {
+	private void processFacePart(String modelName, ModelArrays arrays, Group group, int lineNumber,
+			String facePartText) throws ParseException {
 		FacePart facePart = extractFacePart(facePartText, modelName, lineNumber);
 
 		try {
-			verifyAndAdd(modelArrays.vertices, facePart.vertexID, currentGroup.groupVertices, VERTEX_COUNT);
-			verifyAndAdd(modelArrays.normals, facePart.normalID, currentGroup.groupNormals, NORMALS_COUNT);
+			addToGroup(facePart.vertex, arrays.vertices, group.groupVertices);
+			addToGroup(facePart.normal, arrays.normals, group.groupNormals);
 
-			if (facePart.textureID != -1) {
+			if (facePart.texture != -1) {
 				// in case there is a texture on the face
-				verifyAndAdd(modelArrays.texcoords, facePart.textureID, currentGroup.groupTexcoords,
-						TEXTURE_COUNT);
+				addToGroup(facePart.texture, arrays.texcoords, group.groupTexcoords);
 			}
 		} catch (Exception e) {
 			throw new ParseException(modelName, lineNumber, "Could not find reference.");

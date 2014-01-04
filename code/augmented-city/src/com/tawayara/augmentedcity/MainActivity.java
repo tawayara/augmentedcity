@@ -81,7 +81,7 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 						if (fileReader != null) {
 							model = parser.parse("Model", fileReader);
 							model3d = new Model3D(model);
-							model.setScale(0.05f);
+							model.setScale(0.0005f);
 						}
 					}
 					if (Config.DEBUG)
