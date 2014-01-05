@@ -56,7 +56,9 @@ public class CameraPreviewHandler implements PreviewCallback {
 	private CameraStatus camStatus;
 	private boolean threadsRunning = true;
 	
-	
+	public CameraStatus getCameraStatus() {
+		return this.camStatus;
+	}
 	
 	public CameraPreviewHandler(GLSurfaceView glSurfaceView,
 			PreviewFrameSink sink, Resources res, ARToolkit markerInfo, CameraStatus camStatus) {
@@ -117,7 +119,7 @@ public class CameraPreviewHandler implements PreviewCallback {
 	 * http://groups.google.de/group/android-developers/browse_thread/thread/c85e829ab209ceea/d3b29d3ddc8abf9b?lnk=gst&q=YUV+420#d3b29d3ddc8abf9b
 	 * @param camera
 	 */
-	protected void init(Camera camera)  {
+	public void init(Camera camera)  {
 		Parameters camParams = camera.getParameters();
 		//check if the pixel format is supported
 		if (camParams.getPreviewFormat() == ImageFormat.NV21)  {

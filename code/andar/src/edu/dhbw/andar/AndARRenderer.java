@@ -69,7 +69,6 @@ public class AndARRenderer implements Renderer, PreviewFrameSink{
 	private ARToolkit markerInfo;
 	private float aspectRatio=1;
 	private OpenGLRenderer customRenderer;
-	private AndARActivity activity;
 	
 	/**
 	 * mode, being either GL10.GL_RGB or GL10.GL_LUMINANCE
@@ -82,9 +81,8 @@ public class AndARRenderer implements Renderer, PreviewFrameSink{
 	 * @param res Resources
 	 * @param customRenderer non AR renderer, may be null
 	 */
-	public AndARRenderer(ARToolkit markerInfo, AndARActivity activity)  {
+	public AndARRenderer(ARToolkit markerInfo)  {
 		this.markerInfo = markerInfo;
-		this.activity = activity;
 	}
 	
 
@@ -229,10 +227,6 @@ public class AndARRenderer implements Renderer, PreviewFrameSink{
 		textureName = textureNames[0];
 		
 		textureBuffer = makeFloatBuffer(textureCoords);
-
-		
-		//register unchaught exception handler
-		Thread.currentThread().setUncaughtExceptionHandler(activity);
 		
 		markerInfo.initGL(gl);
 		if(customRenderer != null)

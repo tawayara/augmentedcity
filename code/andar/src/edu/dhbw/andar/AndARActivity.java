@@ -23,11 +23,9 @@ import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.hardware.Camera;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.os.Debug;
@@ -37,32 +35,19 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import edu.dhbw.andar.camera.CameraManager;
 import edu.dhbw.andar.exceptions.AndARRuntimeException;
 import edu.dhbw.andar.interfaces.OpenGLRenderer;
 import edu.dhbw.andar.util.IO;
 
 public abstract class AndARActivity extends Activity implements Callback, UncaughtExceptionHandler{
 	private GLSurfaceView glSurfaceView;
-	private Camera camera;
 	private AndARRenderer renderer;
 	private Resources res;
-	private CameraPreviewHandler cameraHandler;
-	private boolean mPausing = false;
 	private ARToolkit artoolkit;
 	private CameraStatus camStatus = new CameraStatus();
-	private boolean surfaceCreated = false;
-	private SurfaceHolder mSurfaceHolder = null;
-	private Preview previewSurface;
-	private boolean startPreviewRightAway;
-	
-	public AndARActivity() {
-		startPreviewRightAway = true;
-	}
-	
-	public AndARActivity(boolean startPreviewRightAway) {
-		this.startPreviewRightAway = startPreviewRightAway;
-	}
-
+	private PreviewSurfaceView previewSurface;
+	private CameraManager cameraManager;
 	
     /** Called when the activity is first created. */
     @Override
@@ -83,14 +68,16 @@ public abstract class AndARActivity extends Activity implements Callback, Uncaug
 			throw new AndARRuntimeException(e.getMessage());
 		}
 		FrameLayout frame = new FrameLayout(this);
-		previewSurface = new Preview(this);
+		cameraManager = new CameraManager();
+		previewSurface = new PreviewSurfaceView(this, cameraManager);
 				
         glSurfaceView = new GLSurfaceView(this);
-		renderer = new AndARRenderer(artoolkit, this);
-		cameraHandler = new CameraPreviewHandler(glSurfaceView, renderer, res, artoolkit, camStatus);
+		renderer = new AndARRenderer(artoolkit);
         glSurfaceView.setRenderer(renderer);
         glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
         glSurfaceView.getHolder().addCallback(this);
+        
+        cameraManager.setPreviewHandler(new CameraPreviewHandler(glSurfaceView, renderer, res, artoolkit, camStatus));
         
         frame.addView(glSurfaceView);
         frame.addView(previewSurface);
@@ -140,12 +127,10 @@ public abstract class AndARActivity extends Activity implements Callback, Uncaug
     
     @Override
     protected void onPause() {
-    	mPausing = true;
+        cameraManager.pause();
         this.glSurfaceView.onPause();
         super.onPause();
         finish();
-        if(cameraHandler != null)
-        	cameraHandler.stopThreads();
     }
     
     @Override
@@ -160,9 +145,13 @@ public abstract class AndARActivity extends Activity implements Callback, Uncaug
 
     @Override
     protected void onResume() {
-    	mPausing = false;
+    	cameraManager.resume();
     	glSurfaceView.onResume();
         super.onResume();
+    }
+    
+    protected void startPreview() {
+    	previewSurface.startPreview();
     }
     
     /* (non-Javadoc)
@@ -171,69 +160,6 @@ public abstract class AndARActivity extends Activity implements Callback, Uncaug
     @Override
     protected void onStop() {
     	super.onStop();
-    }
-    
-    /**
-     * Open the camera.
-     */
-    private void openCamera()  {
-    	if (camera == null) {
-	    	//camera = Camera.open();
-    		camera = CameraHolder.instance().open();
-    		   		    		
-    		
-    		
-    		try {
-				camera.setPreviewDisplay(mSurfaceHolder);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
-			CameraParameters.setCameraParameters(camera, 
-					previewSurface.getWidth(), previewSurface.getHeight());
-	        
-	        if(!Config.USE_ONE_SHOT_PREVIEW) {
-	        	camera.setPreviewCallback(cameraHandler);	 
-	        } 
-			try {
-				cameraHandler.init(camera);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}			
-    	}
-    }
-    
-    private void closeCamera() {
-        if (camera != null) {
-        	CameraHolder.instance().keep();
-        	CameraHolder.instance().release();
-        	camera = null;
-        	camStatus.previewing = false;
-        }
-    }
-    
-    /**
-     * Open the camera and start detecting markers.
-     * note: You must assure that the preview surface already exists!
-     */
-    public void startPreview() {
-    	if(!surfaceCreated) return;
-    	if(mPausing || isFinishing()) return;
-    	if (camStatus.previewing) stopPreview();
-    	openCamera();
-		camera.startPreview();
-		camStatus.previewing = true;
-    }
-    
-    /**
-     * Close the camera and stop detecting markers.
-     */
-    private void stopPreview() {
-    	if (camera != null && camStatus.previewing ) {
-    		camStatus.previewing = false;
-            camera.stopPreview();
-         }
-    	
     }
 
 	/* The GLSurfaceView changed
@@ -251,7 +177,7 @@ public abstract class AndARActivity extends Activity implements Callback, Uncaug
 	 */
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
-		surfaceCreated = true;			
+		previewSurface.setSurfaceCreated(true);
 	}
 
 	/* GLSurfaceView was destroyed
@@ -285,51 +211,5 @@ public abstract class AndARActivity extends Activity implements Callback, Uncaug
 	 */
 	public SurfaceView getSurfaceView() {
 		return glSurfaceView;
-	}
-	
-	class Preview extends SurfaceView implements SurfaceHolder.Callback {
-	    SurfaceHolder mHolder;
-	    Camera mCamera;
-	    private int w;
-	    private int h;
-	    
-	    Preview(Context context) {
-	        super(context);
-	        
-	        // Install a SurfaceHolder.Callback so we get notified when the
-	        // underlying surface is created and destroyed.
-	        mHolder = getHolder();
-	        mHolder.addCallback(this);
-	        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-	    }
-
-	    public void surfaceCreated(SurfaceHolder holder) {
-	    }
-
-	    public void surfaceDestroyed(SurfaceHolder holder) {
-	        // Surface will be destroyed when we return, so stop the preview.
-	        // Because the CameraDevice object is not a shared resource, it's very
-	        // important to release it when the activity is paused.
-	        stopPreview();
-	        closeCamera();
-	        mSurfaceHolder = null;
-	    }
-
-	    public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-	    	this.w=w;
-	    	this.h=h;
-	    	mSurfaceHolder = holder;
-	    	if(startPreviewRightAway)
-	    		startPreview();
-	    }
-	    
-	    public int getScreenWidth() {
-	    	return w;
-	    }
-	    
-	    public int getScreenHeight() {
-	    	return h;
-	    }
-
 	}
 }

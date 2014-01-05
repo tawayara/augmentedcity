@@ -32,10 +32,6 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 	private ProgressDialog waitDialog;
 	ARToolkit artoolkit;
 
-	public MainActivity() {
-		super(false);
-	}
-
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
