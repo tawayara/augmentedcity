@@ -29,7 +29,7 @@ class MtlParser {
 		String line;
 		try {
 			for (line = is.readLine(); line != null; line = is.readLine()) {
-				line = Util.getCanonicalLine(line).trim();
+				line = LineCleanner.removeMultipleSpacesAndComments(line);
 				if (line.length() > 0) {
 					if (line.startsWith("newmtl ")) {
 						// specular color

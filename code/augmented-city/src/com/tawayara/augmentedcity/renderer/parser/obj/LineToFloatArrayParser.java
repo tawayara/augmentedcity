@@ -1,5 +1,6 @@
 package com.tawayara.augmentedcity.renderer.parser.obj;
 
+
 /**
  * Class that aims to parse a given String on an array with float values.
  * 

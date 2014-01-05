@@ -28,7 +28,7 @@ public class ObjParser {
 
 	private void parseMaterials(Model model, String line) {
 		String filename = line.substring(7);
-		String[] files = Util.splitBySpace(filename);
+		String[] files = filename.split(" ");
 
 		for (int i = 0; i < files.length; i++) {
 			BufferedReader mtlFile = fileUtil.getReaderFromName(files[i]);
