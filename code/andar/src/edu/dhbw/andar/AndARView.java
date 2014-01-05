@@ -32,7 +32,8 @@ public class AndARView {
 		
 		FrameLayout frame = new FrameLayout(context);
 		cameraManager = new CameraManager();
-		previewSurface = new PreviewSurfaceView(context, cameraManager);
+		previewSurface = new PreviewSurfaceView(context);
+		previewSurface.setCameraManager(cameraManager);
 
 		glSurfaceView = new GLSurfaceView(context);
 		renderer = new AndARRenderer(artoolkit);

@@ -15,15 +15,18 @@ public class PreviewSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 	private int width;
 	private int height;
     
-    public PreviewSurfaceView(Context context, CameraManager cameraManager) {
+    public PreviewSurfaceView(Context context) {
         super(context);
         
-        this.cameraManager = cameraManager;
         
         // Install a SurfaceHolder.Callback so we get notified when the underlying surface is created and destroyed.
         mHolder = getHolder();
         mHolder.addCallback(this);
-        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        //mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+    }
+    
+    public void setCameraManager(CameraManager cameraManager) {
+        this.cameraManager = cameraManager;
     }
 
     public void surfaceCreated(SurfaceHolder holder) {

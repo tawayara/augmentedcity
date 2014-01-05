@@ -11,6 +11,11 @@ package edu.dhbw.andar.exceptions;
  *
  */
 public class AndARException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public AndARException(String msg) {
 		super(msg);
 	}

@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -108,8 +109,8 @@ public class CustomActivity extends AndARActivity {
 			Bitmap bm = takeScreenshot();
 			FileOutputStream fos;
 			try {
-				fos = new FileOutputStream("/sdcard/AndARScreenshot"
-						+ new Date().getTime() + ".png");
+				fos = new FileOutputStream(Environment.getExternalStorageDirectory().getPath() + 
+						"AndARScreenshot" + new Date().getTime() + ".png");
 				bm.compress(CompressFormat.PNG, 100, fos);
 				fos.flush();
 				fos.close();

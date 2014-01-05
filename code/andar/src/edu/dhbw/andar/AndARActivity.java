@@ -41,7 +41,7 @@ public abstract class AndARActivity extends Activity implements Callback, Uncaug
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//Thread.currentThread().setUncaughtExceptionHandler(this);
+		Thread.currentThread().setUncaughtExceptionHandler(this);
 		setFullscreen();
 		disableScreenTurnOff();
 		// orientation is set via the manifest
