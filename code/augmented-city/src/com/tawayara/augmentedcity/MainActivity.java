@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
-import android.view.SurfaceHolder;
 
 import com.tawayara.augmentedcity.renderer.LightingRenderer;
 import com.tawayara.augmentedcity.renderer.Model3D;
@@ -22,8 +21,9 @@ import edu.dhbw.andar.ARToolkit;
 import edu.dhbw.andar.AndARActivity;
 import edu.dhbw.andar.Config;
 import edu.dhbw.andar.exceptions.AndARException;
+import edu.dhbw.andar.listener.AndARCameraListener;
 
-public class MainActivity extends AndARActivity implements SurfaceHolder.Callback {
+public class MainActivity extends AndARActivity {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
@@ -35,9 +35,11 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		super.setNonARRenderer(new LightingRenderer());
-		artoolkit = getArtoolkit();
-		getSurfaceView().getHolder().addCallback(this);
+		super.setAndARCameraListener(this.listener);
+		
+		this.artoolkit = super.getArtoolkit();
 	}
 
 	@Override
@@ -45,19 +47,21 @@ public class MainActivity extends AndARActivity implements SurfaceHolder.Callbac
 		// TODO Auto-generated method stub
 
 	}
+	
+	private AndARCameraListener listener = new AndARCameraListener() {
 
-	@Override
-	public void surfaceCreated(SurfaceHolder holder) {
-		super.surfaceCreated(holder);
-		
-		// The 3D model is being loaded here in order to assure that the surface was already created
-		if (model == null) {
-			waitDialog = ProgressDialog.show(this, "", getResources().getText(R.string.loading),
-					true);
-			waitDialog.show();
-			new ModelLoader().execute();
+		@Override
+		public void onCameraCreated() {
+			// The 3D model is being loaded here in order to assure that the surface was already created
+			if (model == null) {
+				waitDialog = ProgressDialog.show(MainActivity.this, "", getResources().getText(R.string.loading),
+						true);
+				waitDialog.show();
+				new ModelLoader().execute();
+			}
 		}
-	}
+		
+	};
 
 	private class ModelLoader extends AsyncTask<Void, Void, Void> {
 

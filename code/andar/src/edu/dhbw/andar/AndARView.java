@@ -6,11 +6,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLSurfaceView;
 import android.view.SurfaceHolder.Callback;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.FrameLayout;
 import edu.dhbw.andar.camera.CameraManager;
 import edu.dhbw.andar.exceptions.AndARRuntimeException;
 import edu.dhbw.andar.interfaces.OpenGLRenderer;
+import edu.dhbw.andar.listener.AndARCameraListener;
 import edu.dhbw.andar.util.IO;
 
 public class AndARView {
@@ -20,8 +22,9 @@ public class AndARView {
 	private AndARRenderer renderer;
 	private ARToolkit artoolkit;
 	private CameraManager cameraManager;
+	private AndARCameraListener listener;
 
-	public View createView(Context context, Callback callback) {
+	public View createView(Context context) {
 		artoolkit = new ARToolkit(context.getResources(), context.getFilesDir());
 
 		try {
@@ -39,7 +42,7 @@ public class AndARView {
 		renderer = new AndARRenderer(artoolkit);
 		glSurfaceView.setRenderer(renderer);
 		glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
-		glSurfaceView.getHolder().addCallback(callback);
+		glSurfaceView.getHolder().addCallback(this.callback);
 
 		cameraManager.setPreviewHandler(new CameraPreviewHandler(glSurfaceView, renderer, context
 				.getResources(), artoolkit, new CameraStatus()));
@@ -49,6 +52,30 @@ public class AndARView {
 
 		return frame;
 	}
+	
+	private Callback callback = new Callback() {
+		
+		@Override
+		public void surfaceDestroyed(SurfaceHolder holder) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void surfaceCreated(SurfaceHolder holder) {
+			previewSurface.setSurfaceCreated(true);
+			
+			if (AndARView.this.listener != null) {
+				AndARView.this.listener.onCameraCreated();
+			}
+		}
+		
+		@Override
+		public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
 
 	public void pause() {
 		this.glSurfaceView.onPause();
@@ -68,19 +95,15 @@ public class AndARView {
 		this.previewSurface.startPreview();
 	}
 
-	public void setSurfaceCreated(boolean value) {
-		previewSurface.setSurfaceCreated(value);
-	}
-
-	public GLSurfaceView getSurfaceView() {
-		return this.glSurfaceView;
-	}
-
 	public void setNonARRenderer(OpenGLRenderer customRenderer) {
 		this.renderer.setNonARRenderer(customRenderer);
 	}
 
 	public Bitmap takeScreenshot() {
 		return renderer.takeScreenshot();
+	}
+
+	public void setAndARCameraListener(AndARCameraListener listener) {
+		this.listener = listener;
 	}
 }
