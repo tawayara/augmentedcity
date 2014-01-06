@@ -36,10 +36,10 @@ public class MainActivity extends AndARActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		super.setNonARRenderer(new LightingRenderer());
-		super.setAndARCameraListener(this.listener);
+		super.getAndARView().setNonARRenderer(new LightingRenderer());
+		super.getAndARView().setAndARCameraListener(this.listener);
 		
-		this.artoolkit = super.getArtoolkit();
+		this.artoolkit = super.getAndARView().getArtoolkit();
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class MainActivity extends AndARActivity {
 				Log.e(TAG, "It was not possible to register the AR model.", e);
 			}
 			
-			startPreview();
+			MainActivity.super.getAndARView().startPreview();
 		}
 	}
 

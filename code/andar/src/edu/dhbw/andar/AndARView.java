@@ -95,14 +95,33 @@ public class AndARView {
 		this.previewSurface.startPreview();
 	}
 
+	/**
+	 * Set a renderer that draws non AR stuff. Optional, may be set to null or omitted. and setups
+	 * lighting stuff.
+	 * 
+	 * @param customRenderer
+	 */
 	public void setNonARRenderer(OpenGLRenderer customRenderer) {
 		this.renderer.setNonARRenderer(customRenderer);
 	}
 
+	/**
+	 * Takes a screenshot. This must not be called from the GUI thread, e.g. from methods like
+	 * onCreateOptionsMenu and onOptionsItemSelected. It is necessary to use an AsyncTask for this
+	 * purpose.
+	 * 
+	 * @return The Bitmap of the requested screenshot
+	 */
 	public Bitmap takeScreenshot() {
 		return renderer.takeScreenshot();
 	}
 
+	/**
+	 * Add a listener to identify when the camera is fully loaded and ready to be used.
+	 * 
+	 * @param listener
+	 *            The instance of the listener to be used.
+	 */
 	public void setAndARCameraListener(AndARCameraListener listener) {
 		this.listener = listener;
 	}

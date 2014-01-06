@@ -3,13 +3,10 @@ package edu.dhbw.andar;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Debug;
 import android.view.Window;
 import android.view.WindowManager;
-import edu.dhbw.andar.interfaces.OpenGLRenderer;
-import edu.dhbw.andar.listener.AndARCameraListener;
 
 /**
  * This class creates the base behavior for an Activity that uses the augmented reality
@@ -34,8 +31,8 @@ public abstract class AndARActivity extends Activity implements UncaughtExceptio
 		this.disableScreenTurnOff();
 
 		// Create the view to be presented by the Activity
-		andarView = new AndARView();
-		setContentView(andarView.createView(this));
+		this.andarView = new AndARView();
+		setContentView(this.andarView.createView(this));
 
 		// Start the method tracing
 		if (Config.DEBUG) {
@@ -55,14 +52,14 @@ public abstract class AndARActivity extends Activity implements UncaughtExceptio
 
 	@Override
 	protected void onPause() {
-		andarView.pause();
+		this.andarView.pause();
 		super.onPause();
 		finish();
 	}
 
 	@Override
 	protected void onResume() {
-		andarView.resume();
+		this.andarView.resume();
 		super.onResume();
 	}
 
@@ -80,45 +77,11 @@ public abstract class AndARActivity extends Activity implements UncaughtExceptio
 	}
 
 	/**
-	 * Set a renderer that draws non AR stuff. Optional, may be set to null or omitted. and setups
-	 * lighting stuff.
+	 * Retrieve the AndARView instance that is being used by the Activity.
 	 * 
-	 * @param customRenderer
+	 * @return The AndarView instance.
 	 */
-	protected void setNonARRenderer(OpenGLRenderer customRenderer) {
-		andarView.setNonARRenderer(customRenderer);
+	protected AndARView getAndARView() {
+		return this.andarView;
 	}
-
-	protected void startPreview() {
-		andarView.startPreview();
-	}
-
-	/**
-	 * @return a the instance of the ARToolkit.
-	 */
-	protected ARToolkit getArtoolkit() {
-		return andarView.getArtoolkit();
-	}
-
-	/**
-	 * Takes a screenshot. This must not be called from the GUI thread, e.g. from methods like
-	 * onCreateOptionsMenu and onOptionsItemSelected. It is necessary to use an AsyncTask for this
-	 * purpose.
-	 * 
-	 * @return The Bitmap of the requested screenshot
-	 */
-	protected Bitmap takeScreenshot() {
-		return andarView.takeScreenshot();
-	}
-
-	/**
-	 * Add a listener to identify when the camera is fully loaded and ready to be used.
-	 * 
-	 * @param listener
-	 *            The instance of the listener to be used.
-	 */
-	protected void setAndARCameraListener(AndARCameraListener listener) {
-		this.andarView.setAndARCameraListener(listener);
-	}
-
 }
