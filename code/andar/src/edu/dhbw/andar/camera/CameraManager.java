@@ -26,7 +26,8 @@ public class CameraManager {
 
 	private void openCamera(SurfaceHolder surfaceHolder, int width, int height) throws IOException {
 		if (this.camera == null) {
-			this.camera = CameraHolder.instance().open();
+			this.camera = CameraHolder.instance().open();                           
+			//this.camera.setDisplayOrientation(90);
 			this.camera.setPreviewDisplay(surfaceHolder);
 			CameraParameters.setCameraParameters(this.camera, width, height);
 
