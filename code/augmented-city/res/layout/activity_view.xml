@@ -6,10 +6,11 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/andar_fragment_container"
     tools:context=".ViewActivity" >
 
     <fragment android:name="edu.dhbw.andar.AndARFragment"
-            android:id="@+id/viewer"
+            android:id="@+id/andar_fragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

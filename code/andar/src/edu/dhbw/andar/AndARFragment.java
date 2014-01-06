@@ -29,5 +29,9 @@ public class AndARFragment extends Fragment {
 		this.andarView.resume();
 		super.onResume();
 	}
+	
+	public AndARView getAndARView() {
+		return this.andarView;
+	}
 
 }

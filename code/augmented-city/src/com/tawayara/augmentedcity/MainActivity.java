@@ -31,7 +31,7 @@ public class MainActivity extends AndARActivity implements UncaughtExceptionHand
 	private Model model;
 	private Model3D model3d;
 	private ProgressDialog waitDialog;
-	ARToolkit artoolkit;
+	private ARToolkit artoolkit;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
