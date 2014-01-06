@@ -1,7 +1,5 @@
 package edu.dhbw.andar;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Debug;
@@ -15,7 +13,7 @@ import android.view.WindowManager;
  * In order to work properly, it is necessary to set the orientation to landscape on the manifest
  * file for the Activity class that will implement it.
  */
-public abstract class AndARActivity extends Activity implements UncaughtExceptionHandler {
+public abstract class AndARActivity extends Activity {
 
 	// Stores the AndARView instance that is being used by the Activity
 	private AndARView andarView;
@@ -23,7 +21,6 @@ public abstract class AndARActivity extends Activity implements UncaughtExceptio
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Thread.currentThread().setUncaughtExceptionHandler(this);
 
 		// Change the UI to be presented in full screen mode and avoid that the screen get's turned
 		// off by the system.

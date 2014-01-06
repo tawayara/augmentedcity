@@ -2,6 +2,7 @@ package com.tawayara.augmentedcity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -23,7 +24,7 @@ import edu.dhbw.andar.Config;
 import edu.dhbw.andar.exceptions.AndARException;
 import edu.dhbw.andar.listener.AndARCameraListener;
 
-public class MainActivity extends AndARActivity {
+public class MainActivity extends AndARActivity implements UncaughtExceptionHandler {
 
 	private static final String TAG = MainActivity.class.getSimpleName();
 	
@@ -35,6 +36,7 @@ public class MainActivity extends AndARActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Thread.currentThread().setUncaughtExceptionHandler(this);
 		
 		super.getAndARView().setNonARRenderer(new LightingRenderer());
 		super.getAndARView().setAndARCameraListener(this.listener);
