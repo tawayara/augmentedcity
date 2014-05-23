@@ -6,6 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * This class creates the base behavior for a Fragment that uses the augmented reality functionality
+ * from AndAR.
+ */
 public class AndARFragment extends Fragment {
 
 	// Stores the AndARView instance that is being used by the Fragment
@@ -13,7 +17,7 @@ public class AndARFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// Create the view to be presented by the Activity
+		// Create the view to be presented by the Fragment
 		this.andarView = new AndARView();
 		return this.andarView.createView(this.getActivity());
 	}
@@ -29,7 +33,12 @@ public class AndARFragment extends Fragment {
 		this.andarView.resume();
 		super.onResume();
 	}
-	
+
+	/**
+	 * Retrieve the AndARView instance that is being used by the Fragment.
+	 * 
+	 * @return The AndarView instance.
+	 */
 	public AndARView getAndARView() {
 		return this.andarView;
 	}

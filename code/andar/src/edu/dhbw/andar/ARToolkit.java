@@ -17,32 +17,28 @@ import edu.dhbw.andar.util.IO;
 
 /**
  * Interface to the ARToolkit library.
- * 
  */
 public class ARToolkit {
 	private final Resources res;
 	private final String calibFileName = "camera_para.dat";
-	// private double[] glTransMat = new double[16];
 	private boolean initialized = false;
 	private int screenWidth = 0;
 	private int screenHeight = 0;
 	private int imageWidth = 0;
 	private int imageHeight = 0;
-	/**
-	 * Every object get'S his own unique ID. This counter may never be decremented.
-	 */
+
+	// Every object get'S his own unique ID. This counter may never be decremented.
 	private int nextObjectID = 0;
-	/**
-	 * The transformation matrix is accessed, when drawing the object(read), but is also written to
-	 * when detecting the markers from a different thread.
-	 */
+
+	// The transformation matrix is accessed, when drawing the object(read), but is also written to
+	// when detecting the markers from a different thread.
 	private Object transMatMonitor = new Object();
+
 	private DetectMarkerWorker detectMarkerWorker = new DetectMarkerWorker();
 	private List<MarkerVisibilityListener> visListeners = new ArrayList<MarkerVisibilityListener>();
 	private Vector<ARObject> arobjects = new Vector<ARObject>();
-	/**
-	 * absolute path of the local files: the calib file will be stored there, among other things
-	 */
+
+	// absolute path of the local files: the calib file will be stored there, among other things
 	private File baseFolder;
 
 	public ARToolkit(Resources res, File baseFile) {
@@ -247,7 +243,7 @@ public class ARToolkit {
 	public final void draw(GL10 gl) {
 		if (initialized) {
 			if (Config.DEBUG)
-				Log.i("MarkerInfo", "going to draw opengl stuff now");
+				//Log.i("MarkerInfo", "going to draw opengl stuff now");
 			for (ARObject obj : arobjects) {
 				if (obj.isVisible())
 					obj.draw(gl);

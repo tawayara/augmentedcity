@@ -114,6 +114,7 @@ public class ViewActivity extends FragmentActivity {
 				Log.e(TAG, "It was not possible to register the AR model.", e);
 			}
 			
+			Log.w("OPA", "start preview");
 			fragment.getAndARView().startPreview();
 		}
 	}

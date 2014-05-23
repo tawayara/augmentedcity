@@ -14,12 +14,12 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.opengl.GLSurfaceView;
-import android.util.Log;
 import edu.dhbw.andar.exceptions.AndARRuntimeException;
 import edu.dhbw.andar.interfaces.MarkerVisibilityListener;
 import edu.dhbw.andar.interfaces.PreviewFrameSink;
 import edu.dhbw.andar.util.GraphicsUtil;
 import edu.dhbw.andopenglcam.R;
+//import android.util.Log;
 
 /**
  * Handles callbacks of the camera preview
@@ -232,14 +232,14 @@ public class CameraPreviewHandler implements PreviewCallback {
 				}
 				newFrame = false;
 				if(Config.DEBUG)
-					Log.d("ConversionWorker","starting conversion");
+					//Log.d("ConversionWorker","starting conversion");
 				synchronized (modeLock) {
 					switch(mode) {
 					case MODE_RGB:
 						//color:
 						yuv420sp2rgb(curFrame, previewFrameWidth, previewFrameHeight, textureSize, frame);   
 						if(Config.DEBUG)
-							Log.d("ConversionWorker","handing frame over to sink");
+							//Log.d("ConversionWorker","handing frame over to sink");
 						frameSink.getFrameLock().lock();
 						frameBuffer.position(0);
 						frameBuffer.put(frame);
@@ -247,7 +247,7 @@ public class CameraPreviewHandler implements PreviewCallback {
 						frameSink.setNextFrame(frameBuffer);
 						frameSink.getFrameLock().unlock();
 						if(Config.DEBUG)
-							Log.d("ConversionWorker","done converting");
+							//Log.d("ConversionWorker","done converting");
 						break;
 					case MODE_GRAY:
 						//luminace: 

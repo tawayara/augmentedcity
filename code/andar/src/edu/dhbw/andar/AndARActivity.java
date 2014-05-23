@@ -6,12 +6,13 @@ import android.os.Debug;
 import android.view.Window;
 import android.view.WindowManager;
 
+//TODO document if it will be necessary to use the landscape property in the manifest
+// In order to work properly, it is necessary to set the orientation to landscape on the manifest
+// file for the Activity class that will implement it.
+
 /**
  * This class creates the base behavior for an Activity that uses the augmented reality
  * functionality from AndAR.
- * 
- * In order to work properly, it is necessary to set the orientation to landscape on the manifest
- * file for the Activity class that will implement it.
  */
 public abstract class AndARActivity extends Activity {
 
@@ -43,14 +44,17 @@ public abstract class AndARActivity extends Activity {
 		System.runFinalization();
 
 		// Stop the method tracing
-		if (Config.DEBUG)
+		if (Config.DEBUG) {
 			Debug.stopMethodTracing();
+		}
 	}
 
 	@Override
 	protected void onPause() {
 		this.andarView.pause();
 		super.onPause();
+		
+		// TODO identify a better approach instead of finish the activity
 		finish();
 	}
 

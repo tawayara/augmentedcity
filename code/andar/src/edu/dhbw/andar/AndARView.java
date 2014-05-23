@@ -18,39 +18,59 @@ import edu.dhbw.andar.util.IO;
 public class AndARView {
 
 	private GLSurfaceView glSurfaceView;
-	private PreviewSurfaceView previewSurface;
+	private CameraSurfaceView cameraSurface;
 	private AndARRenderer renderer;
 	private ARToolkit artoolkit;
 	private CameraManager cameraManager;
-	private AndARCameraListener listener;
 
 	public View createView(Context context) {
-		artoolkit = new ARToolkit(context.getResources(), context.getFilesDir());
+		this.initializeARToolKit(context);
+		
+		FrameLayout frame = new FrameLayout(context);
+		
+		cameraManager = new CameraManager();
+		
+		createCameraSurface(context);
+		createGLSurfaceView(context);
+		
+		cameraManager.setPreviewHandler(new CameraPreviewHandler(glSurfaceView, renderer, context
+				.getResources(), artoolkit, new CameraStatus()));
 
+		frame.addView(glSurfaceView);
+		frame.addView(cameraSurface);
+//		glSurfaceView.setZOrderMediaOverlay(true);
+//		glSurfaceView.setZOrderOnTop(true);
+		//frame.bringChildToFront(previewSurface);
+		//frame.addView(glSurfaceView);
+
+		return frame;
+	}
+	
+	private void initializeARToolKit(Context context) {
+		this.artoolkit = new ARToolkit(context.getResources(), context.getFilesDir());
+		this.transferFilesToPrivateFS(context);
+	}
+
+	private void transferFilesToPrivateFS(Context context) {
 		try {
 			IO.transferFilesToPrivateFS(context.getFilesDir(), context.getResources());
 		} catch (IOException e) {
 			throw new AndARRuntimeException(e.getMessage());
 		}
-		
-		FrameLayout frame = new FrameLayout(context);
-		cameraManager = new CameraManager();
-		previewSurface = new PreviewSurfaceView(context);
-		previewSurface.setCameraManager(cameraManager);
+	}
 
-		glSurfaceView = new GLSurfaceView(context);
+	private void createCameraSurface(Context context) {
+		cameraSurface = new CameraSurfaceView(context);
+		cameraSurface.setCameraManager(cameraManager);
+	}
+
+	private void createGLSurfaceView(Context context) {
 		renderer = new AndARRenderer(artoolkit);
+		
+		glSurfaceView = new GLSurfaceView(context);
 		glSurfaceView.setRenderer(renderer);
 		glSurfaceView.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
 		glSurfaceView.getHolder().addCallback(this.callback);
-
-		cameraManager.setPreviewHandler(new CameraPreviewHandler(glSurfaceView, renderer, context
-				.getResources(), artoolkit, new CameraStatus()));
-
-		frame.addView(glSurfaceView);
-		frame.addView(previewSurface);
-
-		return frame;
 	}
 	
 	private Callback callback = new Callback() {
@@ -58,16 +78,12 @@ public class AndARView {
 		@Override
 		public void surfaceDestroyed(SurfaceHolder holder) {
 			// TODO Auto-generated method stub
-			
+		
 		}
 		
 		@Override
 		public void surfaceCreated(SurfaceHolder holder) {
-			previewSurface.setSurfaceCreated(true);
-			
-			if (AndARView.this.listener != null) {
-				AndARView.this.listener.onCameraCreated();
-			}
+			cameraSurface.setSurfaceCreated(true);
 		}
 		
 		@Override
@@ -92,7 +108,7 @@ public class AndARView {
 	}
 
 	public void startPreview() {
-		this.previewSurface.startPreview();
+		this.cameraSurface.startPreview();
 	}
 
 	/**
@@ -123,6 +139,6 @@ public class AndARView {
 	 *            The instance of the listener to be used.
 	 */
 	public void setAndARCameraListener(AndARCameraListener listener) {
-		this.listener = listener;
+		this.cameraSurface.setAndARCameraListener(listener);
 	}
 }
