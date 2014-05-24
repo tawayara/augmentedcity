@@ -25,6 +25,10 @@ import com.tawayara.gandar.renderer.utils.MemUtil;
  */
 public class Renderer implements GLSurfaceView.Renderer {
 
+	public static final int MODEL_TEXTURE = R.drawable.teemo;
+	public static final String MODEL_OBJ = "Teemo";
+	
+	
 	private final Vector<Model3D> models;
 	private final Vector3D cameraPosition = new Vector3D(0, 3, 50);
 

@@ -12,11 +12,15 @@ import android.util.Log;
 
 import com.tawayara.gandar.renderer.LightingRenderer;
 import com.tawayara.gandar.renderer.Model3D;
+import com.tawayara.gandar.renderer.Renderer;
 import com.tawayara.gandar.renderer.models.Model;
 import com.tawayara.gandar.renderer.parser.ParseException;
 import com.tawayara.gandar.renderer.parser.obj.ObjParser;
 import com.tawayara.gandar.renderer.utils.AssetsFileUtil;
 import com.tawayara.gandar.renderer.utils.BaseFileUtil;
+import com.tawayara.gandar.service.PointService;
+import com.tawayara.gandar.service.ServiceFactory;
+import com.tawayara.gandar.service.data.Point;
 
 import edu.dhbw.andar.ARToolkit;
 import edu.dhbw.andar.AndARActivity;
@@ -72,7 +76,12 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 		@Override
 		protected Void doInBackground(Void... params) {
 
-			String modelFileName = "Teemo.obj";
+//			PointService service = ServiceFactory.getInstance().getPointService();
+//			int latitude = 0;
+//			int longitude = 0;
+//			Point point = service.retrievePoint(latitude, longitude);
+			
+			String modelFileName = Renderer.MODEL_OBJ + ".obj";
 			BaseFileUtil fileUtil = new AssetsFileUtil(getResources().getAssets());
 			fileUtil.setBaseFolder("models/");
 
