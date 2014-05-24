@@ -25,19 +25,18 @@ public class AndARView {
 
 	public View createView(Context context) {
 		this.initializeARToolKit(context);
-		
+		this.cameraManager = new CameraManager();
+		this.createCameraSurface(context);
+		this.createGLSurfaceView(context);
+		this.cameraManager.setPreviewHandler(new CameraPreviewHandler(this.glSurfaceView, this.renderer, context
+				.getResources(), this.artoolkit, new CameraStatus()));
+		return this.createLayout(context);
+	}
+	
+	private View createLayout(Context context) {
 		FrameLayout frame = new FrameLayout(context);
-		
-		cameraManager = new CameraManager();
-		
-		createCameraSurface(context);
-		createGLSurfaceView(context);
-		
-		cameraManager.setPreviewHandler(new CameraPreviewHandler(glSurfaceView, renderer, context
-				.getResources(), artoolkit, new CameraStatus()));
-
-		frame.addView(glSurfaceView);
-		frame.addView(cameraSurface);
+		frame.addView(this.glSurfaceView);
+		frame.addView(this.cameraSurface);
 //		glSurfaceView.setZOrderMediaOverlay(true);
 //		glSurfaceView.setZOrderOnTop(true);
 		//frame.bringChildToFront(previewSurface);

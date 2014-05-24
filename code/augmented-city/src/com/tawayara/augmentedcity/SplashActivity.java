@@ -26,9 +26,9 @@ public class SplashActivity extends Activity {
 				e.printStackTrace();
 			}
 
-			//Intent intent = new Intent(SplashActivity.this, ViewActivity.class);
-			Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-			intent.setAction(Intent.ACTION_VIEW);
+			Intent intent = new Intent(SplashActivity.this, ViewActivity.class);
+			//Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+			//intent.setAction(Intent.ACTION_VIEW);
 			startActivity(intent);
 
 			// call the activity finish method in order to avoid access the screen again when press
