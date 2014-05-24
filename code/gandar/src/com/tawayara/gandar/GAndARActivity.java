@@ -18,9 +18,6 @@ import com.tawayara.gandar.renderer.parser.ParseException;
 import com.tawayara.gandar.renderer.parser.obj.ObjParser;
 import com.tawayara.gandar.renderer.utils.AssetsFileUtil;
 import com.tawayara.gandar.renderer.utils.BaseFileUtil;
-import com.tawayara.gandar.service.PointService;
-import com.tawayara.gandar.service.ServiceFactory;
-import com.tawayara.gandar.service.data.Point;
 
 import edu.dhbw.andar.ARToolkit;
 import edu.dhbw.andar.AndARActivity;

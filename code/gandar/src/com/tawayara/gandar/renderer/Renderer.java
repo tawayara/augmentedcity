@@ -6,14 +6,9 @@ import java.util.Vector;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
-import android.opengl.GLUtils;
 
-import com.tawayara.gandar.R;
 import com.tawayara.gandar.renderer.models.Vector3D;
 import com.tawayara.gandar.renderer.utils.MemUtil;
 
@@ -25,7 +20,6 @@ import com.tawayara.gandar.renderer.utils.MemUtil;
  */
 public class Renderer implements GLSurfaceView.Renderer {
 
-	public static final int MODEL_TEXTURE = R.drawable.teemo;
 	public static final String MODEL_OBJ = "Teemo";
 	
 	
@@ -71,9 +65,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 	}
 
 	/** The texture pointer */
-	private int[] textures = new int[1];
+	//private int[] textures = new int[1];
 
-	public void loadGLTexture(GL10 gl, Context context) {
+	/*public void loadGLTexture(GL10 gl, Context context) {
 		// loading texture
 		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.teemo);
 
@@ -91,7 +85,7 @@ public class Renderer implements GLSurfaceView.Renderer {
 		
 		// Clean up
 		bitmap.recycle();
-	}
+	}*/
 	
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {

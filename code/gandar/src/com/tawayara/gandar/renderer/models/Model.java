@@ -56,8 +56,8 @@ public class Model implements Serializable{
 	}
 	
 	public void setFileUtil(BaseFileUtil fileUtil) {
-		for (Iterator iterator = materials.values().iterator(); iterator.hasNext();) {
-			Material mat = (Material) iterator.next();
+		for (Iterator<Material> iterator = materials.values().iterator(); iterator.hasNext();) {
+			Material mat = iterator.next();
 			mat.setFileUtil(fileUtil);
 		}
 	}
@@ -95,8 +95,8 @@ public class Model implements Serializable{
 	public void finalize() {
 		if(STATE != STATE_FINALIZED) {
 			STATE = STATE_FINALIZED;
-			for (Iterator iterator = groups.iterator(); iterator.hasNext();) {
-				Group grp = (Group) iterator.next();
+			for (Iterator<Group> iterator = groups.iterator(); iterator.hasNext();) {
+				Group grp = iterator.next();
 				grp.finalize();
 				grp.setMaterial(materials.get(grp.getMaterialName()));
 			}
