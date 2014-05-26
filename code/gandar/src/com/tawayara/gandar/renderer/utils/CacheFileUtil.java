@@ -4,14 +4,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 
 public class CacheFileUtil extends BaseFileUtil {
 
@@ -25,8 +23,8 @@ public class CacheFileUtil extends BaseFileUtil {
 	@Override
 	public BufferedReader getReaderFromName(String name) {
 		try {
-			//File dir = this.context.getCacheDir();
-			File dir = Environment.getExternalStorageDirectory();
+			File dir = this.context.getCacheDir();
+			//File dir = Environment.getExternalStorageDirectory();
 			File file = new File(dir, File.separator + getBaseFolder() + name);
 			InputStream is = new FileInputStream(file);
 			return (is == null) ? null : new BufferedReader(new InputStreamReader(is));
@@ -39,8 +37,8 @@ public class CacheFileUtil extends BaseFileUtil {
 	@Override
 	public Bitmap getBitmapFromName(String name) {
 		try {
-			//File dir = this.context.getCacheDir();
-			File dir = Environment.getExternalStorageDirectory();
+			File dir = this.context.getCacheDir();
+			//File dir = Environment.getExternalStorageDirectory();
 			File file = new File(dir, File.separator + getBaseFolder() + name);
 			InputStream is = new FileInputStream(file);
 			return (is == null) ? null : BitmapFactory.decodeStream(is);

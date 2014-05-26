@@ -15,7 +15,7 @@ class HttpPointService implements PointService {
 	public Point retrievePoint(int latitude, int longitude) {
 		// TODO Auto-generated method stub
 
-		String url = baseUrl + "/point.php?latitude=" + latitude + "&longitude=" + longitude;
+		//String url = baseUrl + "/point.php?latitude=" + latitude + "&longitude=" + longitude;
 
 		Point result = new Point();
 		
@@ -31,11 +31,17 @@ class HttpPointService implements PointService {
 //		result.mtlUrl = baseUrl + "/models/Rammus.mtl";
 //		result.textureUrl = baseUrl + "/models/Rammus.png";
 
-		result.name = "Ziggs";
-		result.description = "the Hexplosives Expert";
-		result.objUrl = baseUrl + "/models/Ziggs.obj";
-		result.mtlUrl = baseUrl + "/models/Ziggs.mtl";
-		result.textureUrl = baseUrl + "/models/Ziggs.png";
+//		result.name = "Ziggs";
+//		result.description = "the Hexplosives Expert";
+//		result.objUrl = baseUrl + "/models/Ziggs.obj";
+//		result.mtlUrl = baseUrl + "/models/Ziggs.mtl";
+//		result.textureUrl = baseUrl + "/models/Ziggs.png";
+
+		result.name = "Tristana";
+		result.description = "the Megling Gunner";
+		result.objUrl = baseUrl + "/models/Tristana.obj";
+		result.mtlUrl = baseUrl + "/models/Tristana.mtl";
+		result.textureUrl = baseUrl + "/models/Tristana.png";
 		
 		result.latitude = 0;
 		result.longitude = 0;

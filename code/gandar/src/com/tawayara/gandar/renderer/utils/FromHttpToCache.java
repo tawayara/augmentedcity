@@ -14,7 +14,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
-import android.os.Environment;
 
 public class FromHttpToCache {
 
@@ -26,8 +25,8 @@ public class FromHttpToCache {
 
 	public void download(String url, String path, String cacheFileName) {
 		try {
-			//String basePath = this.context.getCacheDir();
-			String basePath = Environment.getExternalStorageDirectory().getPath();
+			String basePath = this.context.getCacheDir().getPath();
+			//String basePath = Environment.getExternalStorageDirectory().getPath();
 			File dir = new File(basePath + File.separator + path);
 			if (!dir.exists()) {
 				dir.mkdirs();
@@ -47,27 +46,17 @@ public class FromHttpToCache {
     		HttpEntity entity = httpResponse.getEntity();
     		
     		if (entity != null) {
-    			//String value = entity.getContentType().getValue();
-    			//if(value.contains("application/octet-stream") || value.contains("text/plain")){
-    				InputStream instream = entity.getContent();
-//    				byte[] data = decodeStream(instream);
-//    				
-//    				FileOutputStream fileOuputStream = new FileOutputStream(file);
-//    				fileOuputStream.write(data);
-//    				fileOuputStream.close();
-    				OutputStream output = new FileOutputStream(file);
-    	            byte data[] = new byte[1024];
-    	            int count;
-    	            long total = 0;
-    	            while ((count = instream.read(data)) != -1) {
-    	                total += count;
-    	                //publishProgress((int)(total/1024),lengthOfFile/1024);
-    	                output.write(data, 0, count);
-    	            }
-    	            output.flush();
-    	            output.close();
-    	            instream.close();
-    			//}
+				InputStream instream = entity.getContent();
+				OutputStream output = new FileOutputStream(file);
+	            byte data[] = new byte[1024];
+	            int count;
+	            while ((count = instream.read(data)) != -1) {
+	                output.write(data, 0, count);
+	            }
+	            
+	            output.flush();
+	            output.close();
+	            instream.close();
     		}
 		} catch(Throwable t) {
 			t.printStackTrace();
