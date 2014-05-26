@@ -12,12 +12,15 @@ import android.util.Log;
 
 import com.tawayara.gandar.renderer.LightingRenderer;
 import com.tawayara.gandar.renderer.Model3D;
-import com.tawayara.gandar.renderer.Renderer;
 import com.tawayara.gandar.renderer.models.Model;
 import com.tawayara.gandar.renderer.parser.ParseException;
 import com.tawayara.gandar.renderer.parser.obj.ObjParser;
-import com.tawayara.gandar.renderer.utils.AssetsFileUtil;
 import com.tawayara.gandar.renderer.utils.BaseFileUtil;
+import com.tawayara.gandar.renderer.utils.CacheFileUtil;
+import com.tawayara.gandar.renderer.utils.FromHttpToCache;
+import com.tawayara.gandar.service.PointService;
+import com.tawayara.gandar.service.ServiceFactory;
+import com.tawayara.gandar.service.data.Point;
 
 import edu.dhbw.andar.ARToolkit;
 import edu.dhbw.andar.AndARActivity;
@@ -73,14 +76,23 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 		@Override
 		protected Void doInBackground(Void... params) {
 
-//			PointService service = ServiceFactory.getInstance().getPointService();
-//			int latitude = 0;
-//			int longitude = 0;
-//			Point point = service.retrievePoint(latitude, longitude);
+			PointService service = ServiceFactory.getInstance(GAndARActivity.this.getServiceUrl()).getPointService();
+			int latitude = 0;
+			int longitude = 0;
+			Point point = service.retrievePoint(latitude, longitude);
 			
-			String modelFileName = Renderer.MODEL_OBJ + ".obj";
-			BaseFileUtil fileUtil = new AssetsFileUtil(getResources().getAssets());
-			fileUtil.setBaseFolder("models/");
+			String basePath = "models/";
+			
+			FromHttpToCache fromHttpToCache = new FromHttpToCache(GAndARActivity.this);
+			fromHttpToCache.download(point.objUrl, basePath, point.name + ".obj");
+			fromHttpToCache.download(point.mtlUrl, basePath, point.name + ".mtl");
+			fromHttpToCache.download(point.textureUrl, basePath, point.name + ".png");
+
+			String modelFileName = point.name + ".obj";
+			//String modelFileName = Renderer.MODEL_OBJ + ".obj";
+			//BaseFileUtil fileUtil = new AssetsFileUtil(getResources().getAssets());
+			BaseFileUtil fileUtil = new CacheFileUtil(GAndARActivity.this);
+			fileUtil.setBaseFolder(basePath);
 
 			// read the model file:
 			if (modelFileName.endsWith(".obj")) {

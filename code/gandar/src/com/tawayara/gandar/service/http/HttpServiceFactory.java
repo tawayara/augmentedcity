@@ -5,9 +5,15 @@ import com.tawayara.gandar.service.ServiceFactory;
 
 public class HttpServiceFactory extends ServiceFactory {
 
+	private String baseUrl;
+	
+	public HttpServiceFactory(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
+	
 	@Override
 	public PointService getPointService() {
-		return new HttpPointService();
+		return new HttpPointService(this.baseUrl);
 	}
 
 }
