@@ -38,8 +38,7 @@
             android:label="@string/app_name"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.tawayara.augmentedcity.ViewActivity"
-            android:label="@string/title_activity_view" >
+            android:name="com.tawayara.augmentedcity.ViewActivity">
         </activity>
     </application>
 

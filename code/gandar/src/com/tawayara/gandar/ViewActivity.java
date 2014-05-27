@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Menu;
 
 import com.tawayara.gandar.renderer.LightingRenderer;
 import com.tawayara.gandar.renderer.Model3D;
@@ -46,13 +45,6 @@ public class ViewActivity extends FragmentActivity {
 		this.fragment.getAndARView().setAndARCameraListener(this.listener);
 		
 		this.artoolkit = this.fragment.getAndARView().getArtoolkit();
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.view, menu);
-		return true;
 	}
 	
 	private AndARCameraListener listener = new AndARCameraListener() {
