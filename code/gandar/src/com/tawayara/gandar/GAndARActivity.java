@@ -7,6 +7,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -127,6 +128,16 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.loading_error).setTitle(R.string.loading_error_title);
 		AlertDialog dialog = builder.create();
+		
+		// Set the dismiss listener to close the current activity
+		dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+			
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				GAndARActivity.this.finish();
+			}
+		});
+		
 		dialog.show();
 	}
 
@@ -157,6 +168,8 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 				Log.e(TAG, "It was not possible to read the 3D model file", e);
 			} catch (ParseException e) {
 				Log.e(TAG, "A problem happened reading the 3D model.", e);
+			} catch (Throwable t) {
+				Log.e(TAG, "A problem happened on 3D model loading.", t);
 			}
 
 			return null;

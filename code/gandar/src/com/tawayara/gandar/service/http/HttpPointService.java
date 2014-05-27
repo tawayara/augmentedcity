@@ -63,6 +63,7 @@ class HttpPointService implements PointService {
 		
 		result.latitude = 0;
 		result.longitude = 0;
+		
 		return result;
 	}
 
