@@ -14,22 +14,14 @@ import com.tawayara.gandar.renderer.utils.MemUtil;
 
 /**
  * cares about 3d rendering of the scene
- * 
- * @author tobi
- * 
  */
 public class Renderer implements GLSurfaceView.Renderer {
 
-	public static final String MODEL_OBJ = "Teemo";
-	
-	
 	private final Vector<Model3D> models;
 	private final Vector3D cameraPosition = new Vector3D(0, 3, 50);
 
 	// FPS stuff
 	long frame = 0, time, timebase = 0;
-
-	// end FPS stuff
 
 	public Renderer(Vector<Model3D> models) {
 		this.models = models;
@@ -43,11 +35,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
-		// String extensions = gl.glGetString(GL10.GL_EXTENSIONS);
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity();
-		GLU.gluLookAt(gl, cameraPosition.x, cameraPosition.y, cameraPosition.z,
-				0, 0, 0, 0, 1, 0);
+		GLU.gluLookAt(gl, cameraPosition.x, cameraPosition.y, cameraPosition.z, 0, 0, 0, 0, 1, 0);
 		for (Iterator<Model3D> iterator = models.iterator(); iterator.hasNext();) {
 			Model3D model = iterator.next();
 			model.draw(gl);
@@ -64,33 +54,8 @@ public class Renderer implements GLSurfaceView.Renderer {
 		gl.glLoadIdentity();
 	}
 
-	/** The texture pointer */
-	//private int[] textures = new int[1];
-
-	/*public void loadGLTexture(GL10 gl, Context context) {
-		// loading texture
-		Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.teemo);
-
-		// generate one texture pointer
-		gl.glGenTextures(1, textures, 0);
-		// ...and bind it to our array
-		gl.glBindTexture(GL10.GL_TEXTURE_2D, textures[0]);
-		
-		// create nearest filtered texture
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
-		gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
-		
-		// Use Android GLUtils to specify a two-dimensional texture image from our bitmap 
-		GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
-		
-		// Clean up
-		bitmap.recycle();
-	}*/
-	
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		//loadGLTexture(gl, this.context);
-		
 		gl.glClearColor(1, 1, 1, 1);
 
 		gl.glClearDepthf(1.0f);
@@ -109,12 +74,9 @@ public class Renderer implements GLSurfaceView.Renderer {
 		float[] ambientlight = { .6f, .6f, .6f, 1f };
 		float[] diffuselight = { 1f, 1f, 1f, 1f };
 		float[] specularlight = { 1f, 1f, 1f, 1f };
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT,
-				MemUtil.makeFloatBuffer(ambientlight));
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE,
-				MemUtil.makeFloatBuffer(diffuselight));
-		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR,
-				MemUtil.makeFloatBuffer(specularlight));
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, MemUtil.makeFloatBuffer(ambientlight));
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_DIFFUSE, MemUtil.makeFloatBuffer(diffuselight));
+		gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_SPECULAR, MemUtil.makeFloatBuffer(specularlight));
 		gl.glEnable(GL10.GL_LIGHT0);
 
 		// initialize the models
@@ -122,7 +84,5 @@ public class Renderer implements GLSurfaceView.Renderer {
 			Model3D model = iterator.next();
 			model.init(gl);
 		}
-
 	}
-
 }

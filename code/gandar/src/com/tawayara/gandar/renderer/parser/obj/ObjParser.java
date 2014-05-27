@@ -116,4 +116,9 @@ public class ObjParser {
 
 		return model;
 	}
+
+	public Model parse(String name, String fileName) throws IOException, ParseException {
+		BufferedReader fileReader = this.fileUtil.getReaderFromName(fileName);
+		return this.parse(name, fileReader);
+	}
 }

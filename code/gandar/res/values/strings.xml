@@ -4,7 +4,10 @@
     <string name="app_name">Augmented City</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="loading">Loading&#8230;</string>
+    <string name="loading_title">Loading&#8230;</string>
+    <string name="loading">Retrieving nearest content to be presented.</string>
+    <string name="loading_error_title">Content not loaded</string>
+    <string name="loading_error">Sorry! The content could not be loaded. Try again later.</string>
     <string name="title_activity_view">ViewActivity</string>
 
 </resources>
