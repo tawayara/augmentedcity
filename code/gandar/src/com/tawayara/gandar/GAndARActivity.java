@@ -3,6 +3,8 @@ package com.tawayara.gandar;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
 
+import org.apache.http.client.ClientProtocolException;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -96,7 +98,8 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 	};
 
 	// Retrieve the nearest point from server based on latitude and longitude
-	private Point retrieveNearestPoint(int latitude, int longitude) {
+	private Point retrieveNearestPoint(int latitude, int longitude) throws ClientProtocolException,
+			IOException {
 		PointService service = ServiceFactory.getInstance(this.getServiceUrl()).getPointService();
 		Point point = service.retrievePoint(latitude, longitude);
 		this.downloadPointFilesOnCache(point);
@@ -104,7 +107,7 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 	}
 
 	// Method that will download the files specified on the given point and store them on cache
-	private void downloadPointFilesOnCache(Point point) {
+	private void downloadPointFilesOnCache(Point point) throws ClientProtocolException, IOException {
 		FromHttpToCache fromHttpToCache = new FromHttpToCache(GAndARActivity.this);
 		fromHttpToCache.download(point.objUrl, BASE_FILES_PATH, point.name + ".obj");
 		fromHttpToCache.download(point.mtlUrl, BASE_FILES_PATH, point.name + ".mtl");

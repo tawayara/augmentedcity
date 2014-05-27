@@ -11,6 +11,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+/**
+ * Class that extends the BaseFileUtil in order to retrieve the files from cache.
+ */
 public class CacheFileUtil extends BaseFileUtil {
 
 	private Context context;
@@ -24,11 +27,9 @@ public class CacheFileUtil extends BaseFileUtil {
 	public BufferedReader getReaderFromName(String name) {
 		try {
 			File dir = this.context.getCacheDir();
-			//File dir = Environment.getExternalStorageDirectory();
 			File file = new File(dir, File.separator + getBaseFolder() + name);
 			InputStream is = new FileInputStream(file);
 			return (is == null) ? null : new BufferedReader(new InputStreamReader(is));
-			//return new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
 			return null;
 		}
@@ -38,7 +39,6 @@ public class CacheFileUtil extends BaseFileUtil {
 	public Bitmap getBitmapFromName(String name) {
 		try {
 			File dir = this.context.getCacheDir();
-			//File dir = Environment.getExternalStorageDirectory();
 			File file = new File(dir, File.separator + getBaseFolder() + name);
 			InputStream is = new FileInputStream(file);
 			return (is == null) ? null : BitmapFactory.decodeStream(is);

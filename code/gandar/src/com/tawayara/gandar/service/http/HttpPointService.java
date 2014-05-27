@@ -44,16 +44,22 @@ class HttpPointService implements PointService {
 //		result.textureUrl = baseUrl + "/models/Tristana.png";
 
 //		result.name = "LuLu";
-//		result.description = "the Megling Gunner";
+//		result.description = "?";
 //		result.objUrl = baseUrl + "/models/LuLu.obj";
 //		result.mtlUrl = baseUrl + "/models/LuLu.mtl";
 //		result.textureUrl = baseUrl + "/models/LuLu.png";
 
-		result.name = "Kennen";
-		result.description = "the Megling Gunner";
-		result.objUrl = baseUrl + "/models/Kennen.obj";
-		result.mtlUrl = baseUrl + "/models/Kennen.mtl";
-		result.textureUrl = baseUrl + "/models/Kennen.png";
+//		result.name = "Kennen";
+//		result.description = "?";
+//		result.objUrl = baseUrl + "/models/Kennen.obj";
+//		result.mtlUrl = baseUrl + "/models/Kennen.mtl";
+//		result.textureUrl = baseUrl + "/models/Kennen.png";
+
+		result.name = "Annie";
+		result.description = "?";
+		result.objUrl = baseUrl + "/models/Annie.obj";
+		result.mtlUrl = baseUrl + "/models/Annie.mtl";
+		result.textureUrl = baseUrl + "/models/Annie.png";
 		
 		result.latitude = 0;
 		result.longitude = 0;
