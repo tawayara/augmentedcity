@@ -8,6 +8,9 @@ import org.apache.http.client.ClientProtocolException;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +37,8 @@ import edu.dhbw.andar.listener.AndARCameraListener;
  * on its geolocation. The marker will be the same but the content will change based on the latitude
  * and longitude provided by the user's device.
  */
-public abstract class GAndARActivity extends AndARActivity implements UncaughtExceptionHandler {
+public abstract class GAndARActivity extends AndARActivity implements UncaughtExceptionHandler,
+		LocationListener {
 
 	private static final String TAG = GAndARActivity.class.getSimpleName();
 	private static final String BASE_FILES_PATH = "models/";
@@ -44,6 +48,9 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 	private Model3D model3d;
 	private ProgressDialog progressDialog;
 	private ARToolkit artoolkit;
+	private LocationManager locationManager;
+	private int latitude;
+	private int longitude;
 
 	/**
 	 * Method that must be implemented by the class that will extend this one. This method must
@@ -69,12 +76,52 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 
 		// Retrieve the ARToolKit instance of the AndARView to be used in this class
 		this.artoolkit = super.getAndARView().getArtoolkit();
+
+		// In order to use GPS
+		this.locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+
+		// Removing the Activity from GPS changing notification
+		this.locationManager.removeUpdates(this);
 	}
 
 	@Override
 	public void uncaughtException(Thread thread, Throwable error) {
 		// For now, the error is just being presented on log
 		Log.e(TAG, "Uncaught exception.", error);
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		// Method called when GPS position changes
+		this.latitude = (int) (location.getLatitude() * 1E6);
+		this.longitude = (int) (location.getLongitude() * 1E6);
+
+		Log.d(TAG, "Loading model on: " + this.latitude + " - " + this.longitude);
+
+		// Create and execute the task that is responsible to download the content (that will be
+		// presented over the marker) from server
+		new ModelLoader().execute();
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// Method called when GPS is disabled
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// Method called when GPS is enabled
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// Method called when GPS status changes: OUT_OF_SERVICE, TEMPORARILY_UNAVAILABLE e
+		// AVAILABLE
 	}
 
 	// listener that will be called after the creation of the camera on AndARView
@@ -90,9 +137,11 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 						getResources().getText(R.string.loading), true);
 				GAndARActivity.this.progressDialog.show();
 
-				// Create and execute the task that is responsible to download the content (that
-				// will be presented over the marker) from server
-				new ModelLoader().execute();
+				// Registering the Activity to receive GPS changing notification
+				GAndARActivity.this.locationManager.requestLocationUpdates(
+						LocationManager.GPS_PROVIDER, 0, 0, GAndARActivity.this);
+				GAndARActivity.this.locationManager.requestLocationUpdates(
+						LocationManager.NETWORK_PROVIDER, 0, 0, GAndARActivity.this);
 			}
 		}
 
@@ -128,16 +177,16 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(R.string.loading_error).setTitle(R.string.loading_error_title);
 		AlertDialog dialog = builder.create();
-		
+
 		// Set the dismiss listener to close the current activity
 		dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-			
+
 			@Override
 			public void onDismiss(DialogInterface dialog) {
 				GAndARActivity.this.finish();
 			}
 		});
-		
+
 		dialog.show();
 	}
 
@@ -147,10 +196,6 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 		@Override
 		protected Void doInBackground(Void... params) {
 			try {
-				// TODO retrieve latitude and longitude of the device
-				int latitude = 0;
-				int longitude = 0;
-
 				// Retrieve point based on geolocation
 				Point point = GAndARActivity.this.retrieveNearestPoint(latitude, longitude);
 
