@@ -53,7 +53,7 @@ public class ViewActivity extends FragmentActivity {
 		public void onCameraCreated() {
 			// The 3D model is being loaded here in order to assure that the surface was already created
 			if (model == null) {
-				waitDialog = ProgressDialog.show(ViewActivity.this, "", getResources().getText(R.string.loading),
+				waitDialog = ProgressDialog.show(ViewActivity.this, "", getResources().getText(R.string.retrieving_location),
 						true);
 				waitDialog.show();
 				new ModelLoader().execute();

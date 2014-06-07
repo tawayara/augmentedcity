@@ -2,8 +2,13 @@
 <resources>
 
     <string name="app_name">GAndAR</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="gps_title">GPS configuration</string>
+    <string name="gps_message">Your GPS is not active. Do you want to active it now?</string>
     <string name="loading_title">Loading&#8230;</string>
-    <string name="loading">Retrieving nearest content to be presented.</string>
+    <string name="retrieving_location">Retrieving device location.</string>
+    <string name="retrieving_content">Retrieving nearest content to be presented.</string>
     <string name="loading_error_title">Content not loaded</string>
     <string name="loading_error">Sorry! The content could not be loaded. Try again later.</string>
 

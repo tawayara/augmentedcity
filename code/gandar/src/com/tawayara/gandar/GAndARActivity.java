@@ -8,11 +8,13 @@ import org.apache.http.client.ClientProtocolException;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.tawayara.gandar.renderer.LightingRenderer;
@@ -43,6 +45,7 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 	private static final String TAG = GAndARActivity.class.getSimpleName();
 	private static final String BASE_FILES_PATH = "models/";
 	private static final String MODEL_FILE_EXTENSION = ".obj";
+	private static final int GPS_CONFIG_REQUEST = 1986;
 
 	private Model model;
 	private Model3D model3d;
@@ -51,6 +54,10 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 	private LocationManager locationManager;
 	private int latitude;
 	private int longitude;
+	private boolean shouldLoadFromGps;
+
+	private boolean cameraIsReady;
+	private boolean gpsConfigIsReady;
 
 	/**
 	 * Method that must be implemented by the class that will extend this one. This method must
@@ -67,6 +74,10 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		this.shouldLoadFromGps = false;
+		this.cameraIsReady = false;
+		this.gpsConfigIsReady = false;
+
 		// Change the current thread uncaught exceptions to be handled by this class
 		Thread.currentThread().setUncaughtExceptionHandler(this);
 
@@ -79,6 +90,12 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 
 		// In order to use GPS
 		this.locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		this.verifyGpsSettings();
 	}
 
 	@Override
@@ -97,6 +114,17 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 
 	@Override
 	public void onLocationChanged(Location location) {
+		// Removing the Activity from GPS changing notification
+		this.locationManager.removeUpdates(this);
+
+		try {
+			if (this.progressDialog != null) {
+				this.progressDialog.setMessage(getResources().getText(R.string.retrieving_content));
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "Error while updating the dialog message.", e);
+		}
+
 		// Method called when GPS position changes
 		this.latitude = (int) (location.getLatitude() * 1E6);
 		this.longitude = (int) (location.getLongitude() * 1E6);
@@ -124,25 +152,91 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 		// AVAILABLE
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		// TODO in order to work, it is necessary to remove the finish() from AndARActivity.resume()
+		if (requestCode == GPS_CONFIG_REQUEST) {
+			this.verifyGpsSettings();
+		}
+	}
+
+	// Check if GPS is enabled. If it is not enabled, ask the user if it is the better time to go to
+	// the GSP settings.
+	private void verifyGpsSettings() {
+		if (!this.locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(R.string.gps_message).setTitle(R.string.gps_title);
+			// Add the buttons
+			builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+					startActivityForResult(intent, GPS_CONFIG_REQUEST);
+				}
+			});
+			builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					GAndARActivity.this.gpsConfigIsReady = true;
+					GAndARActivity.this.ping();
+				}
+			});
+
+			// Create the AlertDialog
+			AlertDialog dialog = builder.create();
+			dialog.show();
+		} else {
+			this.shouldLoadFromGps = true;
+			this.gpsConfigIsReady = true;
+			this.ping();
+		}
+	}
+
+	private synchronized void ping() {
+		if (this.cameraIsReady && this.gpsConfigIsReady) {
+			this.startLocationRetrieving();
+		}
+	}
+
+	private void startLocationRetrieving() {
+		// The 3D model is being loaded here in order to assure that the surface that presents
+		// camera content and the surface that receives 3D objects were already created
+		if (this.model == null) {
+			try {
+				this.progressDialog = ProgressDialog.show(GAndARActivity.this, getResources()
+						.getText(R.string.loading_title),
+						getResources().getText(R.string.retrieving_location), true);
+				this.progressDialog.setCancelable(true);
+				this.progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+					
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						GAndARActivity.this.finish();
+					}
+				});
+				this.progressDialog.show();
+			} catch (Exception e) {
+				Log.e(TAG, "Error while creating the dialog.", e);
+			}
+
+			// Registering the Activity to receive GPS changing notification
+			if (this.shouldLoadFromGps) {
+				this.locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+						GAndARActivity.this);
+			}
+
+			this.locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
+					GAndARActivity.this);
+		}
+	}
+
 	// listener that will be called after the creation of the camera on AndARView
 	private AndARCameraListener listener = new AndARCameraListener() {
 
 		@Override
 		public void onCameraCreated() {
-			// The 3D model is being loaded here in order to assure that the surface that presents
-			// camera content and the surface that receives 3D objects were already created
-			if (GAndARActivity.this.model == null) {
-				GAndARActivity.this.progressDialog = ProgressDialog.show(GAndARActivity.this,
-						getResources().getText(R.string.loading_title),
-						getResources().getText(R.string.loading), true);
-				GAndARActivity.this.progressDialog.show();
-
-				// Registering the Activity to receive GPS changing notification
-				GAndARActivity.this.locationManager.requestLocationUpdates(
-						LocationManager.GPS_PROVIDER, 0, 0, GAndARActivity.this);
-				GAndARActivity.this.locationManager.requestLocationUpdates(
-						LocationManager.NETWORK_PROVIDER, 0, 0, GAndARActivity.this);
-			}
+			GAndARActivity.this.cameraIsReady = true;
+			GAndARActivity.this.ping();
 		}
 
 	};
@@ -225,8 +319,13 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 			super.onPostExecute(result);
 
 			try {
-				// Release the ProgressDialog instance that is displaying the downloading progress
-				GAndARActivity.this.progressDialog.dismiss();
+				try {
+					// Release the ProgressDialog instance that is displaying the downloading
+					// progress
+					GAndARActivity.this.progressDialog.dismiss();
+				} catch (Exception e) {
+					Log.e(TAG, "Error while releasing the dialog.", e);
+				}
 
 				if (GAndARActivity.this.model3d != null) {
 					// Register model on ARToolKit in order to present it over marker
