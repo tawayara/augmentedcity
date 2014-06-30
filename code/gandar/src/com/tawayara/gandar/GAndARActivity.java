@@ -116,16 +116,32 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 	public void onLocationChanged(Location location) {
 		// Removing the Activity from GPS changing notification
 		this.locationManager.removeUpdates(this);
-
+		this.loadLocationData(location);
+	}
+	
+	private synchronized void loadLocationData(Location location) {
 		try {
-			if (this.progressDialog != null) {
+			if (this.progressDialog != null && this.progressDialog.isShowing()) {
 				this.progressDialog.setMessage(getResources().getText(R.string.retrieving_content));
+			} else {
+				this.progressDialog = ProgressDialog.show(GAndARActivity.this, getResources()
+						.getText(R.string.loading_title),
+						getResources().getText(R.string.retrieving_content_new_location), true);
+				this.progressDialog.setCancelable(true);
+				this.progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+					
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						GAndARActivity.this.finish();
+					}
+				});
+				
+				this.progressDialog.show();
 			}
 		} catch (Exception e) {
 			Log.e(TAG, "Error while updating the dialog message.", e);
 		}
 
-		// Method called when GPS position changes
 		this.latitude = (int) (location.getLatitude() * 1E6);
 		this.longitude = (int) (location.getLongitude() * 1E6);
 
@@ -194,6 +210,15 @@ public abstract class GAndARActivity extends AndARActivity implements UncaughtEx
 
 	private synchronized void ping() {
 		if (this.cameraIsReady && this.gpsConfigIsReady) {
+			// TODO use this location
+//			Location lastKnownLocation;
+//			if (shouldLoadFromGps) {
+//				lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//			} else {
+//				lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//			}
+			
+			//this.loadLocationData(lastKnownLocation);
 			this.startLocationRetrieving();
 		}
 	}

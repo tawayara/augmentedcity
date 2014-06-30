@@ -9,6 +9,7 @@
     <string name="loading_title">Loading&#8230;</string>
     <string name="retrieving_location">Retrieving device location.</string>
     <string name="retrieving_content">Retrieving nearest content to be presented.</string>
+    <string name="retrieving_content_new_location">New location found. Retrieving nearest content to be presented.</string>
     <string name="loading_error_title">Content not loaded</string>
     <string name="loading_error">Sorry! The content could not be loaded. Try again later.</string>
 
