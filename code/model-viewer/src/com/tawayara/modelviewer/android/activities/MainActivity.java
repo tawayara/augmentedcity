@@ -48,6 +48,10 @@ public class MainActivity extends Activity {
 	
 	private List<ModelListItem> createItemsList() {
 		List<ModelListItem> items = new ArrayList<ModelListItem>();
+		items.add(createItem("Photo", "Photo", "the Hexplosives Expert", R.drawable.photo));
+//		items.add(createItem("Edwin", "Edwin", "Marinho", R.drawable.edwin));
+//		items.add(createItem("Haroldo", "Haroldo", "Gondim", R.drawable.haroldo));
+//		items.add(createItem("Rafael", "Roballo", "Roballo", R.drawable.roballo));
 		items.add(createItem("Android", "android", "Android model", R.drawable.ic_launcher));
 		items.add(createItem("Amumu", "Amumu", "the Sad Mummy", R.drawable.amumu));
 		items.add(createItem("Annie", "Annie", "the Dark Child", R.drawable.annie));
